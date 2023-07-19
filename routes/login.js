@@ -1,9 +1,9 @@
 const express = require("express");
-const connection = require("../config/db_data");
+// const connection = require("../config/db_data");
+const { loginUser } = require('../control/loginControl');
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  // Route logic for the home route
-});
+
+router.post("/",loginUser);
 
 module.exports = router;
