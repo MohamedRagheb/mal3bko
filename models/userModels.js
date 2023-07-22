@@ -5,7 +5,7 @@ function UserSignIn(username, password, res) {
   // validtion on data
   const schema = joi.object({
     username: joi.string().required().min(6).max(16),
-    password: joi.string().required().alphanum().min(2),
+    password: joi.string().required().alphanum().min(8),
   });
   const err = schema.validate(
     { username: username, password: password },
@@ -14,10 +14,12 @@ function UserSignIn(username, password, res) {
     }
   );
   if (err.error?.details.length > 0) {
-    const errMessage = [];
-    err.forEach((e) => {
-      errMessage.push(e.message);
-    });
+    let errMessage = [];
+    console.log(err.error)
+    for (let i = 0; i < err.error.details.length ; i++ ){
+      // console.log(err.error.details[i].message)
+      errMessage.push(err.error.details[i].message);
+    } 
     res.json({
       Errors: errMessage,
     });
@@ -25,12 +27,11 @@ function UserSignIn(username, password, res) {
     connection.query(
       "SELECT * FROM users WHERE UserName = ? && password = ? ",
       [username, password],
-        (resualt, errr) => {
-          console.log(resualt)
-        if (errr) {
-          console.log(err);
+      (error, resualt) => {
+        if (error) {
+          console.log(error);
         }
-        res.json({ data: resualt });
+        res.status(200).json({ data: resualt });
       }
     );
   }
