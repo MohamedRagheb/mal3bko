@@ -8,7 +8,7 @@ const {
 const errorHandelarAsMidelleWare = require("../middelwares/errorhandelars");
 // opreate
 const router = express.Router();
-const multer = Upload();
+const multer = Upload({ dest: 'Files/' });
 const parseDataMiddleware = multer.none();
 
 router.post(
@@ -16,7 +16,7 @@ router.post(
   [parseDataMiddleware, checkIfAllDataThere, errorHandelarAsMidelleWare],
   UserController.login
 );
-router.post("/signUp",multer.none(), UserController.signUp);
+router.post("/signUp",multer.single('img'),[ errorHandelarAsMidelleWare], UserController.signUp);
 router.get(
   "/userShow/:id",
   multer.none(),

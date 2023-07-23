@@ -4,7 +4,6 @@ const connection = require("../config/db_data");
 function UserSignIn(req, res) {
   // declare data
   const { username, password } = req.body;
-  console.log(req.files)
   // validtion on data
   const schema = joi.object({
     username: joi.string().required().min(6).max(16),
@@ -26,7 +25,7 @@ function UserSignIn(req, res) {
     });
   } else {
     connection.query(
-      "SELECT * FROM users WHERE UserName = ? && password = ? ",
+      "SELECT id , nickname ,username token ,role ,favPLayGrounds ,friend_req,friends,block,intersting_pg,intersting_users,img,sports_playedF FROM users WHERE UserName = ? && password = ? ",
       [username, password],
       (error, resualt) => {
         if (error) {
@@ -50,12 +49,20 @@ function UserSignUp(req, res) {
     phone,
     sports_played,
   } = req.body;
-  console.log(req.body)
+  const img = req.file;
+  console.log(req.body);
+  console.log(req.file);
   // validate   data
   const fileMetadataSchema = joi.object({
     filename: joi.string().required(),
-    mimetype: joi.string().valid('image/jpeg', 'image/png', 'image/gif').required(),
-    size: joi.number().max(5 * 1024 * 1024).required(), // Max size: 5MB
+    mimetype: joi
+      .string()
+      .valid("image/jpeg", "image/png", "image/gif")
+      .required(),
+    size: joi
+      .number()
+      .max(5 * 1024 * 1024)
+      .required(), // Max size: 5MB
   });
 
   const schema = joi.object({
@@ -64,7 +71,6 @@ function UserSignUp(req, res) {
     confirmed_password: joi.any().valid(joi.ref("password")).required(),
     email: joi.string().email().required(),
     phone: joi.string().min(10).max(14).required(),
-    img: joi.required(),
   });
   const err = schema.validate(
     {
@@ -78,7 +84,13 @@ function UserSignUp(req, res) {
       abortEarly: false,
     }
   );
-  console.log(err);
+  const Err = fileMetadataSchema.validate({
+    filename: img.filename,
+    mimetype: img.mimetype,
+    size: img.size,
+  });
+  console.log(err.error, Err.error);
 }
+
 
 module.exports = { UserSignIn, UserSignUp };

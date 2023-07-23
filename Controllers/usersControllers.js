@@ -7,7 +7,7 @@ const UserController = {
   },
   signUp: (req, res) => {
     UserSignUp(req, res);
-    res.json({ status: "success" });
+    // res.json({ status: "success" });
   },
   userShow: (req, res) => {
     const { id } = req.params;
