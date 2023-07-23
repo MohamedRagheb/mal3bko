@@ -1,14 +1,12 @@
-const {UserSignIn} = require('../models/userModels')
+const { UserSignIn, UserSignUp } = require("../models/userModels");
 
 const UserController = {
   login: (req, res) => {
-    const { username, password } = req.body;
-    UserSignIn(username, password , res);
+    UserSignIn(req, res);
     // res.json({ status: "sucess" });
   },
   signUp: (req, res) => {
-    const { name, password, email, phone, confirmed_password } = req.body;
-    console.log(name, password, email, phone, confirmed_password);
+    UserSignUp(req, res);
     res.json({ status: "success" });
   },
   userShow: (req, res) => {

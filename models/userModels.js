@@ -1,7 +1,10 @@
 const joi = require("joi");
 const connection = require("../config/db_data");
 
-function UserSignIn(username, password, res) {
+function UserSignIn(req, res) {
+  // declare data
+  const { username, password } = req.body;
+  console.log(req.files)
   // validtion on data
   const schema = joi.object({
     username: joi.string().required().min(6).max(16),
@@ -15,11 +18,9 @@ function UserSignIn(username, password, res) {
   );
   if (err.error?.details.length > 0) {
     let errMessage = [];
-    console.log(err.error)
-    for (let i = 0; i < err.error.details.length ; i++ ){
-      // console.log(err.error.details[i].message)
+    for (let i = 0; i < err.error.details.length; i++) {
       errMessage.push(err.error.details[i].message);
-    } 
+    }
     res.json({
       Errors: errMessage,
     });
@@ -29,12 +30,55 @@ function UserSignIn(username, password, res) {
       [username, password],
       (error, resualt) => {
         if (error) {
-          console.log(error);
+          res.status(500).json({ data: error });
+        } else if (resualt.length > 0) {
+          res.status(200).json({ data: resualt });
+        } else {
+          res.status(500).json({ data: "Wrong Username or Password" });
         }
-        res.status(200).json({ data: resualt });
       }
     );
   }
 }
+function UserSignUp(req, res) {
+  //declare data
+  const {
+    username,
+    password,
+    confirmed_password,
+    email,
+    phone,
+    sports_played,
+  } = req.body;
+  console.log(req.body)
+  // validate   data
+  const fileMetadataSchema = joi.object({
+    filename: joi.string().required(),
+    mimetype: joi.string().valid('image/jpeg', 'image/png', 'image/gif').required(),
+    size: joi.number().max(5 * 1024 * 1024).required(), // Max size: 5MB
+  });
 
-module.exports = { UserSignIn };
+  const schema = joi.object({
+    username: joi.string().required().min(6).max(16),
+    password: joi.string().required().alphanum().min(8),
+    confirmed_password: joi.any().valid(joi.ref("password")).required(),
+    email: joi.string().email().required(),
+    phone: joi.string().min(10).max(14).required(),
+    img: joi.required(),
+  });
+  const err = schema.validate(
+    {
+      username: username,
+      password: password,
+      confirmed_password: confirmed_password,
+      email: email,
+      phone: phone,
+    },
+    {
+      abortEarly: false,
+    }
+  );
+  console.log(err);
+}
+
+module.exports = { UserSignIn, UserSignUp };
