@@ -1,6 +1,6 @@
 const joi = require("joi");
 const connection = require("../config/db_data");
-
+const { Storage } = require("@google-cloud/storage");
 function UserSignIn(req, res) {
   // declare data
   const { username, password } = req.body;
@@ -49,22 +49,32 @@ function UserSignUp(req, res) {
     phone,
     sports_played,
   } = req.body;
-  const img = req.file;
-  console.log(req.body);
-  console.log(req.file);
-  // validate   data
-  const fileMetadataSchema = joi.object({
-    filename: joi.string().required(),
-    mimetype: joi
-      .string()
-      .valid("image/jpeg", "image/png", "image/gif")
-      .required(),
-    size: joi
-      .number()
-      .max(5 * 1024 * 1024)
-      .required(), // Max size: 5MB
+  const file = req.file;
+  const storage = new Storage({
+    keyFilename: "../config/mla3bko-firebase-adminsdk-khscy-6c3dcc5734.json",
   });
+  let bucketName = "mla3bko";
+  let filename = file
+  const uploadFile = async() => {
 
+    // Uploads a local file to the bucket
+    await storage.bucket(bucketName).upload(filename, {
+        // Support for HTTP requests made with `Accept-Encoding: gzip`
+        gzip: true,
+        // By setting the option `destination`, you can change the name of the
+        // object you are uploading to a bucket.
+        metadata: {
+            // Enable long-lived HTTP caching headers
+            // Use only if the contents of the file will never change
+            // (If the contents will change, use cacheControl: 'no-cache')
+            cacheControl: 'public, max-age=31536000',
+        },
+});
+
+console.log(`${filename} uploaded to ${bucketName}.`);
+}
+
+uploadFile();
   const schema = joi.object({
     username: joi.string().required().min(6).max(16),
     password: joi.string().required().alphanum().min(8),
@@ -84,13 +94,12 @@ function UserSignUp(req, res) {
       abortEarly: false,
     }
   );
-  const Err = fileMetadataSchema.validate({
-    filename: img.filename,
-    mimetype: img.mimetype,
-    size: img.size,
-  });
-  console.log(err.error, Err.error);
+  // const Err = fileMetadataSchema.validate({
+  //   filename: img.filename,
+  //   mimetype: img.mimetype,
+  //   size: img.size,
+  // });
+  // console.log(err.error, Err.error);
 }
-
 
 module.exports = { UserSignIn, UserSignUp };
