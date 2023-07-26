@@ -8,7 +8,7 @@ const {
 const errorHandelarAsMidelleWare = require("../middelwares/errorhandelars");
 // opreate
 const router = express.Router();
-const multer = Upload({ dest: "users_imgs/" });
+const multer = Upload({ storage: Upload.memoryStorage()});
 const parseDataMiddleware = multer.none();
 
 router.post(
