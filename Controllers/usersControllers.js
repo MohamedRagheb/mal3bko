@@ -1,4 +1,4 @@
-const { UserSignIn, UserSignUp } = require("../models/userModels");
+const { UserSignIn, UserSignUp ,AllUsersShow,ShowUser} = require("../models/userModels");
 
 const UserController = {
   login: (req, res) => {
@@ -7,15 +7,13 @@ const UserController = {
   },
   signUp: (req, res) => {
     UserSignUp(req, res);
-    res.json({ status: "success" });
+    // res.json({ status: "success" });
   },
   userShow: (req, res) => {
-    const { id } = req.params;
-    console.log(id);
-    res.json({ status: "success" });
+    ShowUser(req,res)
   },
   AllUsersShow: (req, res) => {
-    res.json({ status: "success" });
+    AllUsersShow(req,res)
   },
   EditUser: (req, res) => {
     const { id } = req.params;

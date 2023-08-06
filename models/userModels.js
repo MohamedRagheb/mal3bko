@@ -6,7 +6,7 @@ function UserSignIn(req, res) {
   // validtion on data
   const schema = joi.object({
     username: joi.string().required().min(6).max(16),
-    password: joi.string().required().alphanum().min(8),
+    password: joi.string().required().min(3),
   });
   const err = schema.validate(
     { username: username, password: password },
@@ -38,6 +38,15 @@ function UserSignIn(req, res) {
     );
   }
 }
+function AllUsersShow(req, res) {
+  connection.query("SELECT * FROM `users` ", (error, resualt) => {
+    if (error) {
+      res.status(500).json({ data: error });
+    } else {
+      res.status(200).json({ data: resualt });
+    }
+  });
+}
 function UserSignUp(req, res) {
   // declare data
   const {
@@ -53,11 +62,8 @@ function UserSignUp(req, res) {
     username: joi.string().required().min(6).max(16),
     password: joi.string().required().min(8),
     confirmed_password: joi.any().valid(joi.ref("password")).required(),
-    email: joi.string().email().required(),
-    phone: joi
-      .string()
-      .pattern(/^[0-9]+$/)
-      .required(),
+    email: joi.string().email(),
+    phone: joi.string().pattern(/^[0-9]+$/),
   });
   const err = schema.validate(
     {
@@ -79,6 +85,29 @@ function UserSignUp(req, res) {
     res.json({
       Errors: errMessage,
     });
+  } else {
+    const newUser = { username, password };
+    connection.query("INSERT INTO users SET ?", newUser, (err, success) => {
+      if (err) {
+        res.status(500).json({ data: err });
+      }
+      res.status(200).json({ data: "User Added Sucess" });
+    });
   }
 }
-module.exports = { UserSignIn, UserSignUp };
+function ShowUser(req, res) {
+  const id = req.params.id
+  connection.query(
+    "SELECT * FROM `users` WHERE id = ? ",
+    id,
+    (error, resualt) => {
+      if (error) {
+        res.status(500).json({ data: error });
+      } else {
+        res.status(200).json({ data: resualt });
+      }
+    }
+  );
+}
+
+module.exports = { UserSignIn, UserSignUp, AllUsersShow, ShowUser };
