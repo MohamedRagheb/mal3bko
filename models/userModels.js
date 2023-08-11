@@ -1,5 +1,7 @@
 const joi = require("joi");
 const connection = require("../config/db_data");
+const { genrateAcsessToken } = require("../helpers/token");
+
 function UserSignIn(req, res) {
   // declare data
   const { username, password } = req.body;
@@ -24,13 +26,35 @@ function UserSignIn(req, res) {
     });
   } else {
     connection.query(
-      "SELECT id , nickname ,username token ,role ,favPLayGrounds ,friend_req,friends,block,intersting_pg,intersting_users,img,sports_played FROM users WHERE UserName = ? && password = ? ",
+      "SELECT id FROM users WHERE UserName = ? && password = ? ",
       [username, password],
       (error, resualt) => {
         if (error) {
           res.status(500).json({ data: error });
         } else if (resualt.length > 0) {
-          res.status(200).json({ data: resualt });
+          const { id } = resualt[0];
+          const token = genrateAcsessToken({ id: id });
+          connection.query(
+            "UPDATE `users` SET `token` = ? WHERE `users`.`id` = ?;",
+            [token, id],
+            (err, resualtTokenrequest) => {
+              if (err) {
+                res.status(400).json({ error: error });
+              } else {
+                connection.query(
+                  "SELECT id , nickname ,username ,token ,role ,favPLayGrounds ,friend_req,friends,block,intersting_pg,intersting_users,img,sports_played FROM users WHERE id = ?",
+                  [id],
+                  (error, resualt) => {
+                    if (error) {
+                      res.status(400).json({ error: error });
+                    } else {
+                      res.status(200).json({ data: resualt });
+                    }
+                  }
+                );
+              }
+            }
+          );
         } else {
           res.status(500).json({ data: "Wrong Username or Password" });
         }
@@ -96,7 +120,7 @@ function UserSignUp(req, res) {
   }
 }
 function ShowUser(req, res) {
-  const id = req.params.id
+  const id = req.params.id;
   connection.query(
     "SELECT * FROM `users` WHERE id = ? ",
     id,
