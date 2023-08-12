@@ -48,7 +48,7 @@ function UserSignIn(req, res) {
                     if (error) {
                       res.status(400).json({ error: error });
                     } else {
-                      res.status(200).json({ data: resualt });
+                      res.status(200).json({ data: resualt[0] });
                     }
                   }
                 );
@@ -63,13 +63,16 @@ function UserSignIn(req, res) {
   }
 }
 function AllUsersShow(req, res) {
-  connection.query("SELECT * FROM `users` ", (error, resualt) => {
-    if (error) {
-      res.status(500).json({ data: error });
-    } else {
-      res.status(200).json({ data: resualt });
+  connection.query(
+    "SELECT  id , nickname ,username  ,role ,favPLayGrounds ,friend_req,friends,block,intersting_pg,intersting_users,img,sports_played FROM `users` ",
+    (error, resualt) => {
+      if (error) {
+        res.status(500).json({ data: error });
+      } else {
+        res.status(200).json({ data: resualt.id });
+      }
     }
-  });
+  );
 }
 function UserSignUp(req, res) {
   // declare data
@@ -110,12 +113,44 @@ function UserSignUp(req, res) {
       Errors: errMessage,
     });
   } else {
-    const newUser = { username, password };
-    connection.query("INSERT INTO users SET ?", newUser, (err, success) => {
+    const keys = Object.keys(req.body);
+    //appending all inputs to new object
+    const newUser = {};
+
+    keys.forEach((el) => {
+      if (el != "confirmed_password") {
+        newUser[el] = req.body[el];
+      }
+    });
+    // genrate token and attach to user object
+    connection.query("INSERT INTO users SET ? ", newUser, (err, success) => {
       if (err) {
         res.status(500).json({ data: err });
+      } else {
+        const newUserID = success.insertId;
+        const token = genrateAcsessToken({ id: newUserID });
+        connection.query(
+          "UPDATE `users` SET `token` = ? WHERE `users`.`id` = ?;",
+          [token, newUserID],
+          (err, resualtTokenrequest) => {
+            if (err) {
+              res.status(400).json({ error: err });
+            } else {
+              connection.query(
+                "SELECT id , nickname ,username ,token ,role ,favPLayGrounds ,friend_req,friends,block,intersting_pg,intersting_users,img,sports_played FROM users WHERE id = ?",
+                [newUserID],
+                (error, resualt) => {
+                  if (error) {
+                    res.status(400).json({ error: error });
+                  } else {
+                    res.status(200).json({ data: resualt });
+                  }
+                }
+              );
+            }
+          }
+        );
       }
-      res.status(200).json({ data: "User Added Sucess" });
     });
   }
 }

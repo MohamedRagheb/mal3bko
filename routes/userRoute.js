@@ -1,6 +1,7 @@
 const express = require("express");
 const Upload = require("multer");
 const UserController = require("../Controllers/usersControllers");
+const {checkIfTokenSentAndNotExpierd} = require("../helpers/token")
 const {
   checkIfAllDataThere,
   checkIfDataLength,
@@ -23,7 +24,7 @@ router.post(
   UserController.signUp
 );
 router.get("/Users/:id", multer.none(), UserController.userShow);
-router.get("/AllUsersShow", multer.none(), UserController.AllUsersShow);
+router.get("/AllUsersShow",checkIfTokenSentAndNotExpierd, multer.none(), UserController.AllUsersShow);
 router.put("/EditUser/:id", multer.none(), UserController.EditUser);
 router.delete("/DeleteUser/:id", multer.none(), UserController.DeleteUser);
 
