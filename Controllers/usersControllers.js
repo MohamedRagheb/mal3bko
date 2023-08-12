@@ -3,6 +3,7 @@ const {
   UserSignUp,
   AllUsersShow,
   ShowUser,
+  updateUser
 } = require("../models/userModels");
 
 const UserController = {
@@ -21,9 +22,8 @@ const UserController = {
     AllUsersShow(req, res);
   },
   EditUser: (req, res) => {
-    const { id } = req.params;
-    console.log(id);
-    res.json({ status: "success" });
+    updateUser(req,res)
+    // res.json({ status: "success" });
   },
   DeleteUser: (req, res) => {
     const { id } = req.params;

@@ -35,9 +35,9 @@ router.get(
   multer.none(),
   UserController.AllUsersShow
 );
-router.put(
+router.post(
   "/EditUser/:id",
-  checkIfTokenSentAndNotExpierd,
+  [checkIfTokenSentAndNotExpierd, checkIfAllDataThere, errorHandelarAsMidelleWare],
   multer.none(),
   UserController.EditUser
 );

@@ -1,6 +1,6 @@
 const joi = require("joi");
 const connection = require("../config/db_data");
-const { genrateAcsessToken } = require("../helpers/token");
+const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
 
 function UserSignIn(req, res) {
   // declare data
@@ -64,12 +64,12 @@ function UserSignIn(req, res) {
 }
 function AllUsersShow(req, res) {
   connection.query(
-    "SELECT  id , nickname ,username  ,role ,favPLayGrounds ,friend_req,friends,block,intersting_pg,intersting_users,img,sports_played FROM `users` ",
+    "SELECT  nickname ,username  ,img,sports_played FROM `users` ",
     (error, resualt) => {
       if (error) {
         res.status(500).json({ data: error });
       } else {
-        res.status(200).json({ data: resualt.id });
+        res.status(200).json({ data: resualt });
       }
     }
   );
@@ -168,5 +168,34 @@ function ShowUser(req, res) {
     }
   );
 }
+function updateUser(req, res) {
+  const userId = req.params.id;
+  const sentBody = req.body;
+  let newUserObj = {};
+  const keyes = Object.keys(sentBody);
+  keyes.forEach((e) => {
+    if (e != "password" && e != "confirmed_password") {
+      newUserObj[e] = sentBody[e];
+    }
+  });
+  if (sentBody["password"]) {
+    const token = req.headers.authorization;
+    const currentUserId = getpayloadInfo(token).id;
+    if (currentUserId == userId) {
+      connection.query(
+        "UPDATE users SET ? WHERE id = ?",
+        [newUserObj, userId],
+        (err, sucess) => {
+          if (err) {
+            return res.status(500).json({ Error: err });
+          }
+          return res.status(200).json({ status: "User Updated successfully" });
+        }
+      );
+    } else {
+      return res.status(401).json({Error:"not authorized"});
+    }
+  }
+}
 
-module.exports = { UserSignIn, UserSignUp, AllUsersShow, ShowUser };
+module.exports = { UserSignIn, UserSignUp, AllUsersShow, ShowUser, updateUser };
