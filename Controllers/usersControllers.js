@@ -131,7 +131,7 @@ const UserController = {
                     if (error) {
                       res.status(400).json({ error: error });
                     } else {
-                      res.status(200).json({ data: resualt });
+                      res.status(200).json({ data: resualt[0] });
                     }
                   }
                 );
