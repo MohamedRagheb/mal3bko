@@ -2,10 +2,7 @@ const express = require("express");
 const Upload = require("multer");
 const UserController = require("../Controllers/usersControllers");
 const { checkIfTokenSentAndNotExpierd } = require("../helpers/token");
-const {
-  checkIfAllDataThere,
-  checkIfDataLength,
-} = require("../middelwares/inputsHandelar");
+const { checkIfAllDataThere } = require("../middelwares/inputsHandelar");
 const errorHandelarAsMidelleWare = require("../middelwares/errorhandelars");
 // opreate
 const router = express.Router();
@@ -37,10 +34,19 @@ router.get(
 );
 router.post(
   "/EditUser/:id",
-  [checkIfTokenSentAndNotExpierd, checkIfAllDataThere, errorHandelarAsMidelleWare],
+  [
+    checkIfTokenSentAndNotExpierd,
+    checkIfAllDataThere,
+    errorHandelarAsMidelleWare,
+  ],
   multer.none(),
   UserController.EditUser
 );
-router.delete("/DeleteUser/:id", multer.none(), UserController.DeleteUser);
+router.delete(
+  "/DeleteMyAccount",
+  checkIfTokenSentAndNotExpierd,
+  multer.none(),
+  UserController.DeleteUser
+);
 
 module.exports = router;
