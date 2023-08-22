@@ -26,14 +26,14 @@ const UserController = {
       });
     } else {
       connection.query(
-        "SELECT id FROM users WHERE UserName = ? && password = ? ",
+        "SELECT users.id , roles.name as role  FROM users , roles WHERE UserName = ? && password = ? AND users.role = roles.id ",
         [username, password],
         (error, resualt) => {
           if (error) {
             res.status(500).json({ data: error });
           } else if (resualt.length > 0) {
-            const { id } = resualt[0];
-            const token = genrateAcsessToken({ id: id });
+            const { id, role } = resualt[0];
+            const token = genrateAcsessToken({ id: id , role:role});
             connection.query(
               "UPDATE `users` SET `token` = ? WHERE `users`.`id` = ?;",
               [token, id],
@@ -42,7 +42,7 @@ const UserController = {
                   res.status(400).json({ error: error });
                 } else {
                   connection.query(
-                    "SELECT id , nickname ,username ,token ,role ,favPLayGrounds ,friend_req,friends,block,intersting_pg,intersting_users,img,sports_played FROM users WHERE id = ?",
+                    "SELECT users.id , users.nickname ,users.username ,users.token ,users.favPLayGrounds ,users.friend_req,users.friends,users.block,users.intersting_pg,users.intersting_users,users.img,users.sports_played , roles.name as role FROM users ,roles  WHERE users.id = ? AND users.role = roles.id",
                     [id],
                     (error, resualt) => {
                       if (error) {

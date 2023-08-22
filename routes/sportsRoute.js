@@ -18,8 +18,23 @@ router.get(
 );
 router.post(
   "/recommend",
-  [parseDataMiddleware,checkIfTokenSentAndNotExpierd],
+  [parseDataMiddleware, checkIfTokenSentAndNotExpierd],
   SportsController.recommendSport
+);
+router.delete(
+  "/delete/:id",
+  [parseDataMiddleware, checkIfTokenSentAndNotExpierd],
+  SportsController.DeleteSport
+);
+router.post(
+  "/Approve/:id",
+  [parseDataMiddleware, checkIfTokenSentAndNotExpierd],
+  SportsController.approveSport
+);
+router.get(
+  "/my-recommends",
+  [parseDataMiddleware, checkIfTokenSentAndNotExpierd],
+  SportsController.myRecommendationas
 );
 
 module.exports = router;
