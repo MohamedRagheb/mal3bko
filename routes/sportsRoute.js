@@ -36,5 +36,10 @@ router.get(
   [parseDataMiddleware, checkIfTokenSentAndNotExpierd],
   SportsController.myRecommendationas
 );
+router.post(
+  "/update-sport/:id",
+  [parseDataMiddleware, checkIfTokenSentAndNotExpierd],
+  SportsController.updateSport
+);
 
 module.exports = router;
