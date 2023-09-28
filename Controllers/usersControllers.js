@@ -4,6 +4,7 @@ const models = require("../models/init-models");
 const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
 const commonErrors = require("../helpers/errors.js");
 const userModel = models.users;
+const rolesModel = models.roles;
 
 const UserController = {
   login: async (req, res) => {
@@ -18,19 +19,19 @@ const UserController = {
         id: fristVersionData.id,
         role: fristVersionData.role,
       });
+      console.log(models.roles);
       await userModel.update({ token }, { where: { id: fristVersionData.id } });
       const data = await userModel.findOne({
-        attributes: { exclude: ["password"] },
-        where: { id: fristVersionData.id },
+        where: { username, password },
+        include: rolesModel,
       });
+
       res.status(commonErrors.Success.errorCode).json({ data: data });
     } catch (errors) {
-      res
-        .status(commonErrors.NotAuthorizedLogin.errorCode)
-        .json({
-          message: commonErrors.NotAuthorizedLogin.errorMessage,
-          errors: errors,
-        });
+      res.status(commonErrors.NotAuthorizedLogin.errorCode).json({
+        message: commonErrors.NotAuthorizedLogin.errorMessage,
+        errors: errors,
+      });
     }
   },
 
@@ -98,12 +99,10 @@ const UserController = {
         });
         res.status(commonErrors.Success.errorCode).json({ data: data });
       } catch (err) {
-        res
-          .status(commonErrors.BadRequest.errorCode)
-          .json({
-            message: commonErrors.BadRequest.errorMessage,
-            error: err["errors"],
-          });
+        res.status(commonErrors.BadRequest.errorCode).json({
+          message: commonErrors.BadRequest.errorMessage,
+          error: err["errors"],
+        });
       }
     }
   },
@@ -122,7 +121,14 @@ const UserController = {
   AllUsersShow: async (req, res) => {
     try {
       const data = await userModel.findAll({
-        attributes: ["id", "username", "nickname", "img", "sports_played"],
+        attributes: [
+          "id",
+          "username",
+          "nickname",
+          "img",
+          "sports_played",
+          "role",
+        ],
       });
       res.status(commonErrors.Success.errorCode).json({ data: data });
     } catch (err) {
@@ -166,12 +172,18 @@ const UserController = {
       // core code will be here
       try {
         await userModel.update({ ...newUserObj }, { where: { id: userId } });
-        res.status(commonErrors.Success.errorCode).json({ message: "User Updated successfully" });
+        res
+          .status(commonErrors.Success.errorCode)
+          .json({ message: "User Updated successfully" });
       } catch (error) {
-        res.status(commonErrors.BadRequest.errorCode).json({ message: "Faild to update user data ", error: error });
+        res
+          .status(commonErrors.BadRequest.errorCode)
+          .json({ message: "Faild to update user data ", error: error });
       }
     } else {
-      return res.status(commonErrors.NotAuthorized.errorCode).json({ error: "NOT AUTHOURIEZD" });
+      return res
+        .status(commonErrors.NotAuthorized.errorCode)
+        .json({ error: "NOT AUTHOURIEZD" });
     }
   },
   DeleteUser: async (req, res) => {
@@ -180,9 +192,13 @@ const UserController = {
     const id = getpayloadInfo(token).id;
     try {
       await userModel.update({ deleted: 1 }, { where: { id } });
-      res.status(commonErrors.Success.errorCode).json({ message: "your account has been deleted" });
+      res
+        .status(commonErrors.Success.errorCode)
+        .json({ message: "your account has been deleted" });
     } catch (err) {
-      res.status(commonErrors.BadRequest.errorCode).json({ message: "We are unable to do that", errors: err });
+      res
+        .status(commonErrors.BadRequest.errorCode)
+        .json({ message: "We are unable to do that", errors: err });
     }
   },
 };
