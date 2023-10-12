@@ -15,19 +15,21 @@ const UserController = {
         attributes: ["id", "role"],
         where: { username, password },
       });
+      console.log(fristVersionData);
       const token = genrateAcsessToken({
         id: fristVersionData.id,
         role: fristVersionData.role,
       });
-      console.log(models.roles);
+      console.log(token);
       await userModel.update({ token }, { where: { id: fristVersionData.id } });
       const data = await userModel.findOne({
         where: { username, password },
-        include: rolesModel,
+        include: "roles",
       });
-
+      console.log(data);
       res.status(commonErrors.Success.errorCode).json({ data: data });
     } catch (errors) {
+      console.log(errors);
       res.status(commonErrors.NotAuthorizedLogin.errorCode).json({
         message: commonErrors.NotAuthorizedLogin.errorMessage,
         errors: errors,
@@ -109,10 +111,11 @@ const UserController = {
   userShow: async (req, res) => {
     const id = req.params.id;
     try {
-      const data = await userModel.findOne(
-        { attributes: { exclude: ["password"] } },
-        { where: { id } }
-      );
+      const data = await userModel.findOne({
+        attributes: { exclude: ["password"] },
+        include: "roles",
+        where: { id },
+      });
       res.status(commonErrors.Success.errorCode).json({ data: data });
     } catch (error) {
       res.json(error);
@@ -129,6 +132,7 @@ const UserController = {
           "sports_played",
           "role",
         ],
+        include: "roles",
       });
       res.status(commonErrors.Success.errorCode).json({ data: data });
     } catch (err) {

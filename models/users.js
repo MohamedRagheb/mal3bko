@@ -76,31 +76,31 @@ module.exports = function (sequelize, DataTypes) {
       sequelize,
       tableName: "users",
       timestamps: false,
-      // indexes: [
-      //   {
-      //     name: "PRIMARY",
-      //     unique: true,
-      //     using: "BTREE",
-      //     fields: [
-      //       { name: "id" },
-      //     ]
-      //   },
-      //   {
-      //     name: "test",
-      //     unique: true,
-      //     using: "BTREE",
-      //     fields: [
-      //       { name: "username" },
-      //     ]
-      //   },
-      //   {
-      //     name: "role",
-      //     using: "BTREE",
-      //     fields: [
-      //       { name: "role" },
-      //     ]
-      //   },
-      // ]
+      indexes: [
+        {
+          name: "PRIMARY",
+          unique: true,
+          using: "BTREE",
+          fields: [
+            { name: "id" },
+          ]
+        },
+        {
+          name: "test",
+          unique: true,
+          using: "BTREE",
+          fields: [
+            { name: "username" },
+          ]
+        },
+        {
+          name: "role",
+          using: "BTREE",
+          fields: [
+            { name: "role" },
+          ]
+        },
+      ]
     }
   );
 };
