@@ -5,28 +5,38 @@ const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
 const commonErrors = require("../helpers/errors.js");
 const userModel = models.users;
 const rolesModel = models.roles;
-
+const {
+  getAlldataFromModal,
+  findOneFromModel,
+  updateRowInModal,
+  createRowInModal,
+} = require("../helpers/modelsHelpars");
 const UserController = {
   login: async (req, res) => {
     // declare data
     const { username, password } = req.body;
     try {
-      const fristVersionData = await userModel.findOne({
-        attributes: ["id", "role"],
-        where: { username, password },
-      });
-      console.log(fristVersionData);
+      const fristVersionData = await findOneFromModel(
+        "users",
+        null,
+        ["id", "role"],
+        null,
+        { username, password }
+      );
       const token = genrateAcsessToken({
         id: fristVersionData.id,
         role: fristVersionData.role,
       });
-      console.log(token);
-      await userModel.update({ token }, { where: { id: fristVersionData.id } });
-      const data = await userModel.findOne({
-        where: { username, password },
-        include: "roles",
-      });
-      console.log(data);
+      await updateRowInModal("users", { token }, { id: fristVersionData.id });
+      const data = await findOneFromModel(
+        "users",
+        ["roles", "sports"],
+        null,
+        "password",
+        {
+          id: fristVersionData.id,
+        }
+      );
       res.status(commonErrors.Success.errorCode).json({ data: data });
     } catch (errors) {
       console.log(errors);
@@ -77,7 +87,6 @@ const UserController = {
       });
     } else {
       const keys = Object.keys(req.body);
-      //appending all inputs to new object
       const newUser = {};
 
       keys.forEach((el) => {
@@ -87,7 +96,7 @@ const UserController = {
       });
       // genrate token and attach to user object
       try {
-        const newUserToCreate = await userModel.create({ ...newUser });
+        const newUserToCreate = await createRowInModal("users", { ...newUser });
         const token = genrateAcsessToken({
           id: newUserToCreate.id,
         });
@@ -101,9 +110,10 @@ const UserController = {
         });
         res.status(commonErrors.Success.errorCode).json({ data: data });
       } catch (err) {
+        console.log(err);
         res.status(commonErrors.BadRequest.errorCode).json({
           message: commonErrors.BadRequest.errorMessage,
-          error: err["errors"],
+          error: err,
         });
       }
     }
@@ -123,19 +133,19 @@ const UserController = {
   },
   AllUsersShow: async (req, res) => {
     try {
-      const data = await userModel.findAll({
-        attributes: [
-          "id",
-          "username",
-          "nickname",
-          "img",
-          "sports_played",
-          "role",
-        ],
-        include: "roles",
-      });
+      const data = await getAlldataFromModal("users", null, null, [
+        "password",
+        "intersting_pg",
+        "intersting_users",
+        "block",
+        "friends",
+        "deleted",
+        "token",
+        "role",
+      ]);
       res.status(commonErrors.Success.errorCode).json({ data: data });
     } catch (err) {
+      console.log(err);
       res.json({ error: err });
     }
   },
@@ -175,7 +185,7 @@ const UserController = {
     if (currentUserId == userId) {
       // core code will be here
       try {
-        await userModel.update({ ...newUserObj }, { where: { id: userId } });
+        await updateRowInModal("users", { ...newUserObj }, { id: userId });
         res
           .status(commonErrors.Success.errorCode)
           .json({ message: "User Updated successfully" });
@@ -192,10 +202,10 @@ const UserController = {
   },
   DeleteUser: async (req, res) => {
     //extract user id from his token
-    const token = req.headers.authorization;
+    const token = req.headers.authorization;  
     const id = getpayloadInfo(token).id;
     try {
-      await userModel.update({ deleted: 1 }, { where: { id } });
+      await updateRowInModal("users", { deleted: 1 }, { id });
       res
         .status(commonErrors.Success.errorCode)
         .json({ message: "your account has been deleted" });
