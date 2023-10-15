@@ -1,16 +1,22 @@
 const joi = require("joi");
 const connection = require("../config/db_data");
 const { getpayloadInfo } = require("../helpers/token");
+const { sports } = require("../models/init-models");
 
 const SportsController = {
-  listAll: (req, res) => {
-    connection.query("SELECT * FROM `sports`", (err, resualt) => {
-      if (err) {
-        return res.status(500).json("Server Error");
-      } else {
-        return res.status(200).json({ data: resualt });
-      }
-    });
+  listAll: async (req, res, next) => {
+    try {
+      const data = await sports.findAll({
+        attributes: {
+          exclude: ["is_approved", "updatedAt", "createdAt", "creator_id"],
+        },
+      });
+      // res.status(200).json({ data });
+      const err = new CustomError("hniper", 200);
+      next(err);
+    } catch (err) {
+      console.log(err);
+    }
   },
   showSport: (req, res) => {
     const id = req.params.id;
