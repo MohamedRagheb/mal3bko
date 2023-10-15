@@ -23,6 +23,10 @@ const commonErrors = {
     errorCode: 404,
     errorMessage: "Not Found",
   },
+  InternalServerErr: {
+    errorCode: 500,
+    errorMessage: "InternalServerErr",
+  },
 };
 
 module.exports = commonErrors;
