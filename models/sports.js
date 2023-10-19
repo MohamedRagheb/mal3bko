@@ -34,18 +34,24 @@ module.exports = function (sequelize, DataTypes) {
         allowNull: false,
         defaultValue: 0,
       },
-      created_at: {
-        type: DataTypes.STRING,
+      deleted: {
+        type: DataTypes.INTEGER,
         allowNull: false,
-        defaultValue: new Date(),
+        defaultValue: 0,
       },
-      updated_at: {
-        type: DataTypes.STRING,
-        allowNull: true,
-        defaultValue: null,
+      createdAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: "created_at",
+      },
+      updatedAt: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        field: "updated_at",
       },
     },
     {
+      timestamps: true,
       sequelize,
       tableName: "sports",
       timestamps: true,

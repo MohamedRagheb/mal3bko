@@ -13,12 +13,14 @@ const UserController = {
     try {
       const fristVersionData = await userModel.findOne({
         attributes: ["id", "role"],
+        include: "roles",
+
         where: { username, password },
       });
       console.log(fristVersionData);
       const token = genrateAcsessToken({
         id: fristVersionData.id,
-        role: fristVersionData.role,
+        role: fristVersionData.roles.id,
       });
       console.log(token);
       await userModel.update({ token }, { where: { id: fristVersionData.id } });

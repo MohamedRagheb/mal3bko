@@ -1,7 +1,7 @@
 const joi = require("joi");
 const connection = require("../config/db_data");
 const { getpayloadInfo } = require("../helpers/token");
-const { sports } = require("../models/init-models");
+const { sports, users } = require("../models/init-models");
 
 const SportsController = {
   listAll: async (req, res, next) => {
@@ -10,49 +10,50 @@ const SportsController = {
         attributes: {
           exclude: ["is_approved", "updatedAt", "createdAt", "creator_id"],
         },
+        where: { is_approved: 1, deleted: 0 },
       });
-      // res.status(200).json({ data });
-      const err = new CustomError("hniper", 200);
-      next(err);
+      res.status(200).json({ data });
     } catch (err) {
       console.log(err);
+      const error = new CustomError(err, 200);
+      next(error);
     }
   },
-  showSport: (req, res) => {
-    const id = req.params.id;
-    connection.query(
-      "SELECT * FROM `sports` WHERE id  = ?",
-      [id],
-      (err, resualt) => {
-        if (err) {
-          return res.status(500).json("Server Error");
-        } else {
-          if (resualt.length == 0) {
-            return res.status(200).json({ message: "Not Found" });
-          }
-          return res.status(200).json({ data: resualt });
-        }
-      }
-    );
+  showSport: async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      const data = await sports.findOne({
+        attributes: {
+          exclude: ["createdAt", "updatedAt", "creator_id", "is_approved"],
+        },
+        include: [
+          { model: users, as: "creator", attributes: ["username", "id"] },
+        ],
+        where: { id },
+      });
+      res.status(200).json({ data });
+    } catch (err) {
+      const error = new CustomError(err, 500);
+      next(error);
+    }
   },
-  recommendSport: (req, res) => {
-    const { name, description } = req.body;
-    const date = new Date();
-    const token = req.headers.authorization.split(" ")[1];
-    const id = getpayloadInfo(token).id;
-    connection.query(
-      "INSERT INTO `sports` (`name`, `created_at`,`description`,`creator_id`) VALUES (?,?,?,?);",
-      [name, date, description, id],
-      (err, resualt) => {
-        if (err) {
-          return res.status(500).json({ message: err });
-        } else {
-          return res
-            .status(200)
-            .json({ message: "Adding Sport request succesfuly" });
-        }
-      }
-    );
+  recommendSport: async (req, res, next) => {
+    try {
+      const { name, description } = req.body;
+      const date = new Date();
+      const token = req.headers.authorization.split(" ")[1];
+      const id = getpayloadInfo(token).id;
+      const request = await sports.create({
+        name,
+        description,
+        creator_id: id,
+      });
+      res.status(200).json({ message: "Sport Recommeded Successfully" });
+    } catch (err) {
+      console.log(err);
+      const error = new CustomError(err, 500);
+      next(error);
+    }
   },
   DeleteSport: (req, res) => {
     const { id } = req.params;
@@ -93,35 +94,33 @@ const SportsController = {
       return res.status(401).json({ error: "Unauthorized" });
     }
   },
-  approveSport: (req, res) => {
-    const { id } = req.params;
-    const token = req.headers.authorization.split(" ")[1];
-    const date = new Date();
-    const role = getpayloadInfo(token).role;
-    const allowedRoles = ["Super Admin", "Admin"];
-    if (allowedRoles.includes(role)) {
-      connection.query(
-        "UPDATE `sports` SET `updated_at`= ?,`is_approved`='1' WHERE  id = ?",
-        [date, id],
-        (err, resualt) => {
-          if (err) {
-            return res.status(500).json({ message: err });
-          } else {
-            return res
-              .status(200)
-              .json({ message: "Sport Approved succesfuly" });
-          }
-        }
-      );
-    } else {
-      return res.status(401).json({ error: "Unauthorized" });
+  approveSport: async (req, res) => {
+    try {
+      const { id } = req.params;
+      const token = req.headers.authorization.split(" ")[1];
+      const date = new Date();
+      const role = getpayloadInfo(token).role;
+      const allowedRoles = [1];
+      if (allowedRoles.includes(role)) {
+        const request = await sports.update(
+          { is_approved: 1 },
+          { where: { id } }
+        );
+        res.status(200).json({ message: "Sport Approved Successfully" });
+      } else {
+        const error = new CustomError("Unauthorized ", 401);
+        next(error);
+      }
+    } catch (err) {
+      const error = new CustomError(err, 500);
+      next(error);
     }
   },
   myRecommendationas(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const payLoad = getpayloadInfo(token);
     connection.query(
-      "SELECT id,name,description,icon,is_approved,updated_at,created_at FROM sports WHERE creator_id = ? ",
+      "SELECT id,name,description,icon,is_approved FROM sports WHERE creator_id = ? ",
       [payLoad.id],
       (err, resualt) => {
         if (err) {

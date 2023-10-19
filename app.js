@@ -15,8 +15,6 @@ db.sync().then(() => {
   const app = express();
 
   app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
-  app.use(express.json()); // Parse JSON requests
-
   app.use("/users", userRoute);
   app.use("/sports", sportsRoute);
   app.use((err, req, res, next) => {
