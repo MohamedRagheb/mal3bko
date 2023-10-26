@@ -74,7 +74,7 @@ module.exports = function(sequelize, DataTypes) {
         ]
       },
       {
-        name: "User_id",
+        name: "User_idD",
         using: "BTREE",
         fields: [
           { name: "sender" },

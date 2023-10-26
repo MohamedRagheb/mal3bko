@@ -18,7 +18,6 @@ db.sync().then(() => {
   app.use("/users", userRoute);
   app.use("/sports", sportsRoute);
   app.use((err, req, res, next) => {
-
     // Extract the status code and message from the error object
     const statusCode = err.statusCode || 500;
     const errorMessage = err.message || "Internal Server Error";

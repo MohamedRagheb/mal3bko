@@ -2,6 +2,7 @@ const joi = require("joi");
 const connection = require("../config/db_data");
 const { getpayloadInfo } = require("../helpers/token");
 const { sports, users } = require("../models/init-models");
+const { async } = require("@firebase/util");
 
 const SportsController = {
   listAll: async (req, res, next) => {
@@ -55,43 +56,31 @@ const SportsController = {
       next(error);
     }
   },
-  DeleteSport: (req, res) => {
-    const { id } = req.params;
-    const token = req.headers.authorization.split(" ")[1];
-    const payLoad = getpayloadInfo(token);
-    let sportData = {};
-    connection.query(
-      "SELECT  creator_id ,is_approved   FROM `sports` WHERE id  = ?",
-      [id],
-      (err, resualt) => {
-        if (err) {
-          throw err;
-        } else {
-          sportData = resualt[0];
-        }
+  DeleteSport: async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const token = req.headers.authorization.split(" ")[1];
+      const payLoad = getpayloadInfo(token);
+      const data = await sports.findOne({
+        where: { id },
+      });
+      if (!data) {
+        res.status(404).json({ message: "No sport with this id" });
       }
-    );
+      const allowedRoles = ["Super Admin", "Admin"];
 
-    const allowedRoles = ["Super Admin", "Admin"];
-    if (
-      (payLoad.id == sportData.creator_id && !sportData.is_approved) ||
-      allowedRoles.includes(payLoad.role)
-    ) {
-      connection.query(
-        "DELETE FROM `sports` WHERE id = ?;",
-        [id],
-        (err, resualt) => {
-          if (err) {
-            return res.status(500).json({ message: err });
-          } else {
-            return res
-              .status(200)
-              .json({ message: "Sport deleted succesfuly" });
-          }
-        }
-      );
-    } else {
-      return res.status(401).json({ error: "Unauthorized" });
+      if (
+        (payLoad.id == data.creator_id && !data.is_approved) ||
+        allowedRoles.includes(payLoad.role)
+      ) {
+        const request = await sports.update({ deleted: 1 }, { where: { id } });
+      } else {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+    } catch (err) {
+      console.log(err);
+      const error = new CustomError(err, 500);
+      next(error);
     }
   },
   approveSport: async (req, res) => {
