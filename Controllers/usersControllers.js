@@ -1,69 +1,46 @@
 const joi = require("joi");
-const connection = require("../config/db_data");
+// const connection = require("../config/db_data");
+const models = require("../models/init-models");
 const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
+const commonErrors = require("../helpers/errors.js");
+const userModel = models.users;
+const rolesModel = models.roles;
+
 const UserController = {
-  login: (req, res) => {
+  login: async (req, res) => {
     // declare data
     const { username, password } = req.body;
-    // validtion on data
-    const schema = joi.object({
-      username: joi.string().required().min(6).max(16),
-      password: joi.string().required().min(3),
-    });
-    const err = schema.validate(
-      { username: username, password: password },
-      {
-        abortEarly: false,
-      }
-    );
-    if (err.error?.details.length > 0) {
-      let errMessage = [];
-      for (let i = 0; i < err.error.details.length; i++) {
-        errMessage.push(err.error.details[i].message);
-      }
-      res.json({
-        Errors: errMessage,
+    try {
+      const fristVersionData = await userModel.findOne({
+        attributes: ["id", "role"],
+        include: "roles",
+
+        where: { username, password },
       });
-    } else {
-      connection.query(
-        "SELECT users.id , roles.name as role  FROM users , roles WHERE UserName = ? && password = ? AND users.role = roles.id ",
-        [username, password],
-        (error, resualt) => {
-          if (error) {
-            res.status(500).json({ data: error });
-          } else if (resualt.length > 0) {
-            const { id, role } = resualt[0];
-            const token = genrateAcsessToken({ id: id , role:role});
-            connection.query(
-              "UPDATE `users` SET `token` = ? WHERE `users`.`id` = ?;",
-              [token, id],
-              (err, resualtTokenrequest) => {
-                if (err) {
-                  res.status(400).json({ error: error });
-                } else {
-                  connection.query(
-                    "SELECT users.id , users.nickname ,users.username ,users.token ,users.favPLayGrounds ,users.friend_req,users.friends,users.block,users.intersting_pg,users.intersting_users,users.img,users.sports_played , roles.name as role FROM users ,roles  WHERE users.id = ? AND users.role = roles.id",
-                    [id],
-                    (error, resualt) => {
-                      if (error) {
-                        res.status(400).json({ error: error });
-                      } else {
-                        res.status(200).json({ data: resualt[0] });
-                      }
-                    }
-                  );
-                }
-              }
-            );
-          } else {
-            res.status(500).json({ data: "Wrong Username or Password" });
-          }
-        }
-      );
+      console.log(fristVersionData);
+      const token = genrateAcsessToken({
+        id: fristVersionData.id,
+        role: fristVersionData.roles.id,
+      });
+      console.log(token);
+      await userModel.update({ token }, { where: { id: fristVersionData.id } });
+      const data = await userModel.findOne({
+        where: { username, password },
+        include: "roles",
+      });
+      console.log(data);
+      res.status(commonErrors.Success.errorCode).json({ data: data });
+    } catch (errors) {
+      console.log(errors);
+      res.status(commonErrors.NotAuthorizedLogin.errorCode).json({
+        message: commonErrors.NotAuthorizedLogin.errorMessage,
+        errors: errors,
+      });
     }
   },
-  signUp: (req, res) => {
-    // declare data
+
+  signUp: async (req, res) => {
+    // declare data in db
     const {
       username,
       password,
@@ -111,64 +88,60 @@ const UserController = {
         }
       });
       // genrate token and attach to user object
-      connection.query("INSERT INTO users SET ? ", newUser, (err, success) => {
-        if (err) {
-          res.status(500).json({ data: err });
-        } else {
-          const newUserID = success.insertId;
-          const token = genrateAcsessToken({ id: newUserID });
-          connection.query(
-            "UPDATE `users` SET `token` = ? WHERE `users`.`id` = ?;",
-            [token, newUserID],
-            (err, resualtTokenrequest) => {
-              if (err) {
-                res.status(400).json({ error: err });
-              } else {
-                connection.query(
-                  "SELECT id , nickname ,username ,token ,role ,favPLayGrounds ,friend_req,friends,block,intersting_pg,intersting_users,img,sports_played FROM users WHERE id = ?",
-                  [newUserID],
-                  (error, resualt) => {
-                    if (error) {
-                      res.status(400).json({ error: error });
-                    } else {
-                      res.status(200).json({ data: resualt[0] });
-                    }
-                  }
-                );
-              }
-            }
-          );
-        }
-      });
+      try {
+        const newUserToCreate = await userModel.create({ ...newUser });
+        const token = genrateAcsessToken({
+          id: newUserToCreate.id,
+        });
+        await userModel.update(
+          { token },
+          { where: { id: newUserToCreate.id } }
+        );
+        const data = await userModel.findOne({
+          attributes: { exclude: ["password"] },
+          where: { id: newUserToCreate.id },
+        });
+        res.status(commonErrors.Success.errorCode).json({ data: data });
+      } catch (err) {
+        res.status(commonErrors.BadRequest.errorCode).json({
+          message: commonErrors.BadRequest.errorMessage,
+          error: err["errors"],
+        });
+      }
     }
   },
-  userShow: (req, res) => {
+  userShow: async (req, res) => {
     const id = req.params.id;
-    connection.query(
-      "SELECT * FROM `users` WHERE id = ? ",
-      id,
-      (error, resualt) => {
-        if (error) {
-          res.status(500).json({ data: error });
-        } else {
-          res.status(200).json({ data: resualt });
-        }
-      }
-    );
+    try {
+      const data = await userModel.findOne({
+        attributes: { exclude: ["password"] },
+        include: "roles",
+        where: { id },
+      });
+      res.status(commonErrors.Success.errorCode).json({ data: data });
+    } catch (error) {
+      res.json(error);
+    }
   },
-  AllUsersShow: (req, res) => {
-    connection.query(
-      "SELECT  nickname ,username  ,img,sports_played FROM `users` ",
-      (error, resualt) => {
-        if (error) {
-          res.status(500).json({ data: error });
-        } else {
-          res.status(200).json({ data: resualt });
-        }
-      }
-    );
+  AllUsersShow: async (req, res) => {
+    try {
+      const data = await userModel.findAll({
+        attributes: [
+          "id",
+          "username",
+          "nickname",
+          "img",
+          "sports_played",
+          "role",
+        ],
+        include: "roles",
+      });
+      res.status(commonErrors.Success.errorCode).json({ data: data });
+    } catch (err) {
+      res.json({ error: err });
+    }
   },
-  EditUser: (req, res) => {
+  EditUser: async (req, res) => {
     const userId = req.params.id;
     const sentBody = req.body;
     const token = req.headers.authorization;
@@ -203,40 +176,36 @@ const UserController = {
     }
     if (currentUserId == userId) {
       // core code will be here
-      connection.query(
-        "UPDATE `users` SET ? WHERE `users`.`id` = ?;",
-        [newUserObj, userId],
-        (error, success) => {
-          if (error) {
-            return res
-              .status(500)
-              .json({ Error: "Erorr While Updating User", error });
-          } else {
-            return res.status(200).json({ Status: "User Edited Succesfuly" });
-          }
-        }
-      );
+      try {
+        await userModel.update({ ...newUserObj }, { where: { id: userId } });
+        res
+          .status(commonErrors.Success.errorCode)
+          .json({ message: "User Updated successfully" });
+      } catch (error) {
+        res
+          .status(commonErrors.BadRequest.errorCode)
+          .json({ message: "Faild to update user data ", error: error });
+      }
     } else {
-      return res.status(401).json({ error: "NOT AUTHOURIEZD" });
+      return res
+        .status(commonErrors.NotAuthorized.errorCode)
+        .json({ error: "NOT AUTHOURIEZD" });
     }
   },
-  DeleteUser: (req, res) => {
+  DeleteUser: async (req, res) => {
     //extract user id from his token
     const token = req.headers.authorization;
-    const currentUserId = getpayloadInfo(token).id;
-    connection.query(
-      "UPDATE `users` SET `deleted` = '1' WHERE `users`.`id` = ?",
-      [currentUserId],
-      (err, sucess) => {
-        if (err) {
-          return res.status(500).json({ Error: err });
-        } else {
-          return res
-            .status(200)
-            .json({ message: "Your Account Deleted succesfuly" });
-        }
-      }
-    );
+    const id = getpayloadInfo(token).id;
+    try {
+      await userModel.update({ deleted: 1 }, { where: { id } });
+      res
+        .status(commonErrors.Success.errorCode)
+        .json({ message: "your account has been deleted" });
+    } catch (err) {
+      res
+        .status(commonErrors.BadRequest.errorCode)
+        .json({ message: "We are unable to do that", errors: err });
+    }
   },
 };
 module.exports = UserController;
