@@ -3,7 +3,6 @@ const express = require("express");
 const userRoute = require("./routes/userRoute");
 const sportsRoute = require("./routes/sportsRoute");
 const playGroundRoute = require("./routes/playGroundRoute");
-// const fileUpload = require('express-fileupload');
 
 const db = require("./config/db_data");
 class CustomError extends Error {
@@ -15,7 +14,6 @@ class CustomError extends Error {
 global.CustomError = CustomError;
 db.sync().then(() => {
   const app = express();
-
 
   app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
   app.use("/users", userRoute);
