@@ -32,10 +32,11 @@ global.CustomError = CustomError;
 //     console.log("Server started on port 3000");
 //   });
 // });
+const app = express();
+
  async function myApp(){
   try {
        await sequelize.sync()
-    const app = express();
 
     app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
     app.use("/users", userRoute);
@@ -49,15 +50,14 @@ global.CustomError = CustomError;
       });
     });
     // Start the server
-    app.listen(3000, () => {
+    app.listen(3000, (err) => {
       console.log("Server started on port 3000");
     });
   }catch (error){
-  throw (error)
+  console.log(error)
   }
 }
 myApp()
-   // export default app
-
+module.exports = app
 
 
