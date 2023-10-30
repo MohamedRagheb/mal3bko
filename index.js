@@ -14,7 +14,7 @@ class CustomError extends Error {
 }
 global.CustomError = CustomError;
   const app = express();
-sequelize.sync().then(() => {
+sequelize.authenticate().then(() => {
 
   app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
   app.use("/users", userRoute);
@@ -26,7 +26,7 @@ sequelize.sync().then(() => {
     res.status(statusCode).json({
       message: errorMessage,
     });
-    next()
+
   });
   /// Start the server
   const port = process.env.PORT || 3000
