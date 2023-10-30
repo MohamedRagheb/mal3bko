@@ -3,7 +3,12 @@
   "builds": [
     {
       "src": "index.js",
-      "use": "@now/node"
+      "use": "@now/node",
+      "config": {
+        "dependencies": {
+          "mysql2": "^3.6.2"
+        }
+      }
     }
   ],
   "routes": [
