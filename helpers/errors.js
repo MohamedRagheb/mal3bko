@@ -29,4 +29,4 @@ const commonErrors = {
   },
 };
 
-module.exports = commonErrors;
+module.exports = commonErrors

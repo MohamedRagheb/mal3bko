@@ -26,7 +26,7 @@ const sequelize = new Sequelize(
   "moodyahmed22120014",
   {
     host: "db4free.net",
-      dialectModule: mysql2, 
+      dialectModule: mysql2,
       dialect: "mysql",
   }
 );

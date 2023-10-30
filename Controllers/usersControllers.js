@@ -2,7 +2,7 @@ const joi = require("joi");
 // const connection = require("../config/db_data");
 const models = require("../models/init-models");
 const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
-const commonErrors = require("../helpers/errors.js");
+const commonErrors = require("../helpers/errors");
 const userModel = models.users;
 const rolesModel = models.roles;
 
