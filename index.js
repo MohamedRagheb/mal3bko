@@ -26,6 +26,7 @@ sequelize.sync().then(() => {
     res.status(statusCode).json({
       message: errorMessage,
     });
+    next()
   });
   /// Start the server
   app.listen(3000, (err) => {
