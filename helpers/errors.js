@@ -1,4 +1,4 @@
-const commonErrors = {
+module.exports  = {
   NotAuthorized: {
     errorCode: 401,
     errorMessage: "Not Authorized",
@@ -29,4 +29,4 @@ const commonErrors = {
   },
 };
 
-module.exports = commonErrors
+
