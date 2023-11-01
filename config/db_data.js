@@ -30,10 +30,11 @@ const sequelize = new Sequelize(
       dialect: "mysql",
       port: 3306,
       pool: {
-          max: 10, // Maximum number of connections in the pool
-          min: 0,  // Minimum number of connections in the pool
-          acquire: 30000, // Maximum time, in milliseconds, that a connection can be idle before being released
-          idle: 10000, // Maximum time, in milliseconds, that a connection can be held in the pool
+          max: 15,
+          min: 5,
+          idle: 20000,
+          evict: 15000,
+          acquire: 30000
       },
   }
 );
