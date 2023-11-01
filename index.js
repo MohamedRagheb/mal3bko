@@ -16,18 +16,18 @@ global.CustomError = CustomError;
   const app = express();
 sequelize.authenticate().then(() => {
 
-  app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
+  // app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
   app.use("/users", userRoute);
   app.use("/sports", sportsRoute);
-  app.use((err, req, res, next) => {
-    // Extract the status code and message from the error object
-    const statusCode = err.statusCode || 500;
-    const errorMessage = err.message || "Internal Server Error";
-    res.status(statusCode).json({
-      message: errorMessage,
-    });
+  // app.use((err, req, res, next) => {
+  //   // Extract the status code and message from the error object
+  //   const statusCode = err.statusCode || 500;
+  //   const errorMessage = err.message || "Internal Server Error";
+  //   res.status(statusCode).json({
+  //     message: errorMessage,
+  //   });
 
-  });
+  // });
   /// Start the server
   const port = process.env.PORT || 3000
   app.listen(port, (err) => {
