@@ -16,24 +16,12 @@ global.CustomError = CustomError;
   const app = express();
 sequelize.authenticate().then(() => {
 
-  // app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
-  app.use("/users", userRoute);
-  app.use("/sports", sportsRoute);
-  // app.use((err, req, res, next) => {
-  //   // Extract the status code and message from the error object
-  //   const statusCode = err.statusCode || 500;
-  //   const errorMessage = err.message || "Internal Server Error";
-  //   res.status(statusCode).json({
-  //     message: errorMessage,
-  //   });
 
-  // });
-  /// Start the server
-  const port = process.env.PORT || 3000
-  app.listen(port, (err) => {
-    console.log("Server started on port 3000",err);
-  });
-});
+  console.log("db auth done")
+
+}).catch((error)=>{
+  console.log(error)
+})
 // const app = express();
 //
 //  async function myApp(){
@@ -60,6 +48,19 @@ sequelize.authenticate().then(() => {
 //   }
 // }
 // myApp()
-
-
+app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
+app.use("/users", userRoute);
+app.use("/sports", sportsRoute);
+app.use((err, req, res, next) => {
+  // Extract the status code and message from the error object
+  const statusCode = err.statusCode || 500;
+  const errorMessage = err.message || "Internal Server Error";
+  res.status(statusCode).json({
+    message: errorMessage,
+  });
+});
+const Port = process.env.PORT || 3000
+app.listen(Port, (err) => {
+      console.log("Server started on port : ",Port);
+    });
 module.exports = app
