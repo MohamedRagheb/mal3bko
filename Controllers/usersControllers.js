@@ -2,7 +2,7 @@ const joi = require("joi");
 // const connection = require("../config/db_data");
 const models = require("../models/init-models");
 const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
-const commonErrors = require("../helpers/errors.js");
+// const commonErrors = require("../helpers/errors");
 const userModel = models.users;
 const rolesModel = models.roles;
 
@@ -17,7 +17,6 @@ const UserController = {
 
         where: { username, password },
       });
-      console.log(fristVersionData);
       const token = genrateAcsessToken({
         id: fristVersionData.id,
         role: fristVersionData.roles.id,
@@ -29,11 +28,11 @@ const UserController = {
         include: "roles",
       });
       console.log(data);
-      res.status(commonErrors.Success.errorCode).json({ data: data });
+      res.status(200).json({ data: data });
     } catch (errors) {
       console.log(errors);
-      res.status(commonErrors.NotAuthorizedLogin.errorCode).json({
-        message: commonErrors.NotAuthorizedLogin.errorMessage,
+      res.status(401).json({
+        message: "commonErrors.NotAuthorizedLogin.errorMessage",
         errors: errors,
       });
     }
@@ -101,10 +100,10 @@ const UserController = {
           attributes: { exclude: ["password"] },
           where: { id: newUserToCreate.id },
         });
-        res.status(commonErrors.Success.errorCode).json({ data: data });
+        res.status(200).json({ data: data });
       } catch (err) {
-        res.status(commonErrors.BadRequest.errorCode).json({
-          message: commonErrors.BadRequest.errorMessage,
+        res.status(500).json({
+          message: "commonErrors.BadRequest.errorMessage",
           error: err["errors"],
         });
       }
@@ -118,7 +117,7 @@ const UserController = {
         include: "roles",
         where: { id },
       });
-      res.status(commonErrors.Success.errorCode).json({ data: data });
+      res.status(200).json({ data: data });
     } catch (error) {
       res.json(error);
     }
@@ -136,7 +135,7 @@ const UserController = {
         ],
         include: "roles",
       });
-      res.status(commonErrors.Success.errorCode).json({ data: data });
+      res.status(200).json({ data: data });
     } catch (err) {
       res.json({ error: err });
     }
@@ -179,16 +178,16 @@ const UserController = {
       try {
         await userModel.update({ ...newUserObj }, { where: { id: userId } });
         res
-          .status(commonErrors.Success.errorCode)
+          .status(200)
           .json({ message: "User Updated successfully" });
       } catch (error) {
         res
-          .status(commonErrors.BadRequest.errorCode)
+          .status(500)
           .json({ message: "Faild to update user data ", error: error });
       }
     } else {
       return res
-        .status(commonErrors.NotAuthorized.errorCode)
+        .status(401)
         .json({ error: "NOT AUTHOURIEZD" });
     }
   },
@@ -199,11 +198,11 @@ const UserController = {
     try {
       await userModel.update({ deleted: 1 }, { where: { id } });
       res
-        .status(commonErrors.Success.errorCode)
+        .status(200)
         .json({ message: "your account has been deleted" });
     } catch (err) {
       res
-        .status(commonErrors.BadRequest.errorCode)
+        .status(500)
         .json({ message: "We are unable to do that", errors: err });
     }
   },

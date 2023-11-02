@@ -13,7 +13,7 @@ class CustomError extends Error {
   }
 }
 global.CustomError = CustomError;
-const app = express();
+  const app = express();
 sequelize.authenticate().then(() => {
 
 
@@ -35,6 +35,6 @@ app.use((err, req, res, next) => {
 });
 const Port = process.env.PORT || 3000
 app.listen(Port, (err) => {
-  console.log("Server started on port : ",Port);
-});
+      console.log("Server started on port : ",Port);
+    });
 module.exports = app

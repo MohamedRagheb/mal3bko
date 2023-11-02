@@ -1,4 +1,5 @@
-const mysql = require("mysql");
+
+const  mysql2 = require("mysql2") ;
 
 // // Create MySQL connection
 // const connection = mysql.createConnection({
@@ -25,7 +26,16 @@ const sequelize = new Sequelize(
   "moodyahmed22120014",
   {
     host: "db4free.net",
-    dialect: "mysql",
+      dialectModule: mysql2,
+      dialect: "mysql",
+      port: 3306,
+      pool: {
+          max: 15,
+          min: 5,
+          idle: 20000,
+          evict: 15000,
+          acquire: 30000
+      },
   }
 );
 
