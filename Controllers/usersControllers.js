@@ -1,8 +1,7 @@
 const joi = require("joi");
-// const connection = require("../config/db_data");
 const models = require("../models/init-models");
 const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
-// const commonErrors = require("../helpers/errors");
+const sendVerificationEmail = require("../services/emailService")
 const userModel = models.users;
 const rolesModel = models.roles;
 
@@ -21,13 +20,12 @@ const UserController = {
         id: fristVersionData.id,
         role: fristVersionData.roles.id,
       });
-      console.log(token);
       await userModel.update({ token }, { where: { id: fristVersionData.id } });
       const data = await userModel.findOne({
         where: { username, password },
         include: "roles",
       });
-      console.log(data);
+     await sendVerificationEmail("modyahmed221@icloud.com",303030 ,"mohamedrahheb")
       res.status(200).json({ data: data });
     } catch (errors) {
       console.log(errors);
