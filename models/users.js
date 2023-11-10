@@ -71,6 +71,14 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.JSON,
         allowNull: true,
       },
+        otp_code: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+            reference:{
+            model:"otp-codes",
+                key:"id"
+            }
+      },
     },
     {
       sequelize,
