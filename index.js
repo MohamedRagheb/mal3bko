@@ -3,6 +3,8 @@ const express = require("express");
 const userRoute = require("./routes/userRoute");
 const sportsRoute = require("./routes/sportsRoute");
 const playGroundRoute = require("./routes/playGroundRoute");
+const fs = require('fs');
+const path = require('path');
 
 const sequelize = require("./config/db_data");
 class CustomError extends Error {
@@ -23,6 +25,22 @@ sequelize.authenticate().then(() => {
   console.log(error)
 })
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
+app.use(express.static("Files"))
+
+app.get('/images', (req , res) => {
+  const imageName = "test.jpg";
+  const imagePath = path.join(__dirname, '/Files', imageName);
+  fs.readFile(imagePath, (err, data) => {
+
+    if (err) {
+      console.error(err);
+      res.status(404).send('Image not found');
+    } else {
+      res.writeHead(200, { 'Content-Type': 'image/jpeg' });
+      res.end(data);
+    }
+  });
+});
 app.use("/users", userRoute);
 app.use("/sports", sportsRoute);
 app.use((err, req, res, next) => {
