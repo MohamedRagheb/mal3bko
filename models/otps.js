@@ -28,8 +28,16 @@ module.exports = function(sequelize, DataTypes) {
         isExpierd: {
             allowNull: false,
             type: DataTypes.INTEGER,
-        }
-    }, {
+        },
+        createdAt: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW,
+        },
+        updatedAt: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW,
+        },
+        }, {
         sequelize,
         tableName: 'otp-codes',
         timestamps: true,

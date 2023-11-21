@@ -83,7 +83,7 @@ function verfiyEmailTempelate(code,username) {
                 margin-top: 60px;
                 font-size: 25px;
                 font-weight: 600;
-                letter-spacing: 25px;
+                letter-spacing: 15px;
                 color: #007200;
                 background-color: #615e5e5a;
                 border-radius: 10px;

@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c3ed9c8f-7510-4036-9093-e7c789931605" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/models/otps.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/config/db_data.js" beforeDir="false" afterPath="$PROJECT_DIR$/config/db_data.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/init-models.js" beforeDir="false" afterPath="$PROJECT_DIR$/models/init-models.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/models/users.js" afterDir="false" />
-    </list>
+    <list default="true" id="c3ed9c8f-7510-4036-9093-e7c789931605" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -64,6 +58,7 @@
       <workItem from="1699120378108" duration="634000" />
       <workItem from="1699525715991" duration="594000" />
       <workItem from="1699634199504" duration="1201000" />
+      <workItem from="1700584572164" duration="1743000" />
     </task>
     <servers />
   </component>
@@ -72,5 +67,16 @@
   </component>
   <component name="UnknownFeatures">
     <option featureType="com.intellij.fileTypeFactory" implementationName=".env" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
