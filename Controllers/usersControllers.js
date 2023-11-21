@@ -1,9 +1,11 @@
 const joi = require("joi");
 const models = require("../models/init-models");
 const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
+const {createOtpCode} = require("../utils/otpUtils")
 const sendVerificationEmail = require("../services/emailService")
 const userModel = models.users;
 const rolesModel = models.roles;
+const otpsModel = models.otps;
 
 const UserController = {
   login: async (req, res) => {
@@ -25,7 +27,7 @@ const UserController = {
         where: { username, password },
         include: "roles",
       });
-     await sendVerificationEmail("modyahmed221@icloud.com",303030 ,"mohamedrahheb")
+
       res.status(200).json({ data: data });
     } catch (errors) {
       console.log(errors);
@@ -94,12 +96,17 @@ const UserController = {
           { token },
           { where: { id: newUserToCreate.id } }
         );
+        const otpCode = createOtpCode()
+
+        await sendVerificationEmail(newUser.email , otpCode,newUser.username)
+        await otpsModel.create({type:"email",user:newUserToCreate.id,code:otpCode})
         const data = await userModel.findOne({
           attributes: { exclude: ["password"] },
           where: { id: newUserToCreate.id },
         });
         res.status(200).json({ data: data });
       } catch (err) {
+        console.log(err);
         res.status(500).json({
           message: "commonErrors.BadRequest.errorMessage",
           error: err["errors"],

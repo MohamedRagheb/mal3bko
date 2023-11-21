@@ -22,13 +22,13 @@ sequelize.authenticate().then(() => {
 }).catch((error)=>{
   console.log(error)
 })
-sequelize.sync({ alter: true }) // The `alter` option will modify existing columns, but won't drop and recreate the table
-    .then(() => {
-      console.log('Database synchronized with models');
-    })
-    .catch((error) => {
-      console.error('Error synchronizing database:', error);
-    });
+// sequelize.sync({ alter: true }) // The `alter` option will modify existing columns, but won't drop and recreate the table
+//     .then(() => {
+//       console.log('Database synchronized with models');
+//     })
+//     .catch((error) => {
+//       console.error('Error synchronizing database:', error);
+//     });
 
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded requests
 app.use("/users", userRoute);

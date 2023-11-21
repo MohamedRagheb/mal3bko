@@ -12,7 +12,7 @@ async function sendVerificationEmail(userEmail,code,userName){
             from: process.env.EMAIL_USERNAME,
             to: userEmail,
             subject: `mal3bko Email verification code`,
-            html: verfiyEmailTempelate(303030,"mohamedAhmed")
+            html: verfiyEmailTempelate(code,userName)
         };
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
@@ -22,4 +22,4 @@ async function sendVerificationEmail(userEmail,code,userName){
             }});
 
 }
-module.exports = sendVerificationEmail
+    module.exports = sendVerificationEmail

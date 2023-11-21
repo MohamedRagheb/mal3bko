@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+const {number} = require("joi");
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
     "users",
@@ -71,14 +72,11 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.JSON,
         allowNull: true,
       },
-        otp_code: {
-        type: DataTypes.INTEGER,
-        allowNull: true,
-            reference:{
-            model:"otp-codes",
-                key:"id"
-            }
-      },
+        is_verified:{
+          type:DataTypes.INTEGER,
+            allowNull:false,
+            defaultValue: 0
+        }
     },
     {
       sequelize,
@@ -91,14 +89,6 @@ module.exports = function (sequelize, DataTypes) {
           using: "BTREE",
           fields: [
             { name: "id" },
-          ]
-        },
-        {
-          name: "test",
-          unique: true,
-          using: "BTREE",
-          fields: [
-            { name: "username" },
           ]
         },
         {

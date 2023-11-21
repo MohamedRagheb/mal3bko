@@ -28,6 +28,7 @@ module.exports = function(sequelize, DataTypes) {
         isExpierd: {
             allowNull: false,
             type: DataTypes.INTEGER,
+            defaultValue:0
         },
         createdAt: {
             type: DataTypes.DATE,
