@@ -1,4 +1,5 @@
 const Sequelize = require("sequelize");
+const {number} = require("joi");
 module.exports = function (sequelize, DataTypes) {
   return sequelize.define(
     "users",
@@ -16,8 +17,12 @@ module.exports = function (sequelize, DataTypes) {
       username: {
         type: DataTypes.STRING(255),
         allowNull: false,
-        unique: "test",
       },
+        email:{
+          type:DataTypes.STRING(255),
+            allowNull:true,
+        }
+        ,
       password: {
         type: DataTypes.STRING(255),
         allowNull: false,
@@ -71,6 +76,11 @@ module.exports = function (sequelize, DataTypes) {
         type: DataTypes.JSON,
         allowNull: true,
       },
+        is_verified:{
+          type:DataTypes.INTEGER,
+            allowNull:false,
+            defaultValue: 0
+        }
     },
     {
       sequelize,
@@ -83,14 +93,6 @@ module.exports = function (sequelize, DataTypes) {
           using: "BTREE",
           fields: [
             { name: "id" },
-          ]
-        },
-        {
-          name: "test",
-          unique: true,
-          using: "BTREE",
-          fields: [
-            { name: "username" },
           ]
         },
         {

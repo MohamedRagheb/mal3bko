@@ -1,34 +1,40 @@
 const joi = require("joi");
-// const connection = require("../config/db_data");
 const models = require("../models/init-models");
 const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
-// const commonErrors = require("../helpers/errors");
+const {createOtpCode} = require("../utils/otpUtils")
+const sendVerificationEmail = require("../services/emailService")
 const userModel = models.users;
 const rolesModel = models.roles;
+const otpsModel = models.otps;
 
 const UserController = {
   login: async (req, res) => {
     // declare data
-    const { username, password } = req.body;
+    const {username, password} = req.body;
     try {
       const fristVersionData = await userModel.findOne({
-        attributes: ["id", "role"],
+        // res.status(400).json({message:"Email Not Verified"})
+        attributes: ["id", "role","is_verified"],
         include: "roles",
 
-        where: { username, password },
+        where: {username, password,is_verified:1,deleted:0},
       });
-      const token = genrateAcsessToken({
-        id: fristVersionData.id,
-        role: fristVersionData.roles.id,
-      });
-      console.log(token);
-      await userModel.update({ token }, { where: { id: fristVersionData.id } });
-      const data = await userModel.findOne({
-        where: { username, password },
-        include: "roles",
-      });
-      console.log(data);
-      res.status(200).json({ data: data });
+
+      if (fristVersionData) {
+        const token = genrateAcsessToken({
+          id: fristVersionData.id,
+        });
+        await userModel.update({token}, {where: {id: fristVersionData.id}});
+        const data = await userModel.findOne({
+          where: {username, password},
+          include: "roles",
+          attributes:["nickname","username","email","token"]
+        });
+        res.status(200).json({data: data});
+      } else {
+        res.status(400).json({message: "Wrong Email or Password "})
+      }
+
     } catch (errors) {
       console.log(errors);
       res.status(401).json({
@@ -57,16 +63,16 @@ const UserController = {
       phone: joi.string().pattern(/^[0-9]+$/),
     });
     const err = schema.validate(
-      {
-        username: username,
-        password: password,
-        confirmed_password: confirmed_password,
-        email: email,
-        phone: phone,
-      },
-      {
-        abortEarly: false,
-      }
+        {
+          username: username,
+          password: password,
+          confirmed_password: confirmed_password,
+          email: email,
+          phone: phone,
+        },
+        {
+          abortEarly: false,
+        }
     );
     if (err.error?.details.length > 0) {
       let errMessage = [];
@@ -88,20 +94,22 @@ const UserController = {
       });
       // genrate token and attach to user object
       try {
-        const newUserToCreate = await userModel.create({ ...newUser });
+        const newUserToCreate = await userModel.create({...newUser});
         const token = genrateAcsessToken({
           id: newUserToCreate.id,
         });
         await userModel.update(
-          { token },
-          { where: { id: newUserToCreate.id } }
+            {token},
+            {where: {id: newUserToCreate.id}}
         );
-        const data = await userModel.findOne({
-          attributes: { exclude: ["password"] },
-          where: { id: newUserToCreate.id },
-        });
-        res.status(200).json({ data: data });
+        const otpCode = createOtpCode()
+
+        await otpsModel.create({type: "email", user: newUserToCreate.id, code: otpCode})
+        await sendVerificationEmail(newUser.email, otpCode, newUser.username)
+
+        res.status(200).json({message: "Verification E-mail Sent"});
       } catch (err) {
+        console.log(err);
         res.status(500).json({
           message: "commonErrors.BadRequest.errorMessage",
           error: err["errors"],
@@ -113,11 +121,11 @@ const UserController = {
     const id = req.params.id;
     try {
       const data = await userModel.findOne({
-        attributes: { exclude: ["password"] },
+        attributes: {exclude: ["password"]},
         include: "roles",
-        where: { id },
+        where: {id},
       });
-      res.status(200).json({ data: data });
+      res.status(200).json({data: data});
     } catch (error) {
       res.json(error);
     }
@@ -135,9 +143,9 @@ const UserController = {
         ],
         include: "roles",
       });
-      res.status(200).json({ data: data });
+      res.status(200).json({data: data});
     } catch (err) {
-      res.json({ error: err });
+      res.json({error: err});
     }
   },
   EditUser: async (req, res) => {
@@ -153,22 +161,22 @@ const UserController = {
       }
     });
     if (sentBody["password"]) {
-      const { password, confirmed_password } = req.body;
+      const {password, confirmed_password} = req.body;
       const schema = joi.object({
         password: joi.string().required().min(8),
         confirmed_password: joi.any().valid(joi.ref("password")).required(),
       });
       const err = schema.validate(
-        {
-          password: password,
-          confirmed_password: confirmed_password,
-        },
-        {
-          abortEarly: false,
-        }
+          {
+            password: password,
+            confirmed_password: confirmed_password,
+          },
+          {
+            abortEarly: false,
+          }
       );
       if (err.error) {
-        return res.status(400).json({ error: err.error.details[0].message });
+        return res.status(400).json({error: err.error.details[0].message});
       } else {
         newUserObj["password"] = password;
       }
@@ -176,19 +184,19 @@ const UserController = {
     if (currentUserId == userId) {
       // core code will be here
       try {
-        await userModel.update({ ...newUserObj }, { where: { id: userId } });
+        await userModel.update({...newUserObj}, {where: {id: userId}});
         res
-          .status(200)
-          .json({ message: "User Updated successfully" });
+            .status(200)
+            .json({message: "User Updated successfully"});
       } catch (error) {
         res
-          .status(500)
-          .json({ message: "Faild to update user data ", error: error });
+            .status(500)
+            .json({message: "Failed to update user data ", error: error});
       }
     } else {
       return res
-        .status(401)
-        .json({ error: "NOT AUTHOURIEZD" });
+          .status(401)
+          .json({error: "NOT AUTHORIZED"});
     }
   },
   DeleteUser: async (req, res) => {
@@ -196,15 +204,45 @@ const UserController = {
     const token = req.headers.authorization;
     const id = getpayloadInfo(token).id;
     try {
-      await userModel.update({ deleted: 1 }, { where: { id } });
+      await userModel.update({deleted: 1}, {where: {id}});
       res
-        .status(200)
-        .json({ message: "your account has been deleted" });
+          .status(200)
+          .json({message: "your account has been deleted"});
     } catch (err) {
       res
-        .status(500)
-        .json({ message: "We are unable to do that", errors: err });
+          .status(500)
+          .json({message: "We are unable to do that", errors: err});
     }
   },
-};
+  verifyEmail: async (req, res) => {
+    try {
+      const {code, email} = req.body
+      const codeRowRequest = await otpsModel.findOne({
+        where: {
+          code
+        },
+        include: {
+          model: userModel,
+          as: "user_otp",
+          attributes: ["username", "email", "is_verified"]
+        }
+      })
+        if(codeRowRequest.isExpierd === 0){
+
+      if (codeRowRequest.user_otp.email === email && codeRowRequest.user_otp.is_verified === 0) {
+        userModel.update({is_verified: 1}, {where: {email}})
+        otpsModel.update({isExpierd:1},{where:{id:codeRowRequest?.id}})
+        res.status(200).json({message: "Email Verified"})
+      }else {
+        res.status(400).json({message:"Email Not Found or Already Verified"})
+      }
+        }else {
+          res.status(400).json({message:"Code is In Valid "})
+
+        }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+}
 module.exports = UserController;

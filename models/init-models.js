@@ -12,6 +12,7 @@ var _roles = require("./roles");
 var _sports = require("./sports");
 var _units = require("./units");
 var _users = require("./users");
+var _otps = require("./otps");
 
 function initModels(sequelize) {
   var Texts = _Texts(sequelize, DataTypes);
@@ -34,6 +35,7 @@ function initModels(sequelize) {
   var sports = _sports(sequelize, DataTypes);
   var units = _units(sequelize, DataTypes);
   var users = _users(sequelize, DataTypes);
+  var otps = _otps(sequelize, DataTypes);
 
   palyground_media.belongsTo(playground, {
     as: "playground",
@@ -106,6 +108,8 @@ function initModels(sequelize) {
   users.hasMany(reviews, { as: "sender_reviews", foreignKey: "sender" });
   sports.belongsTo(users, { as: "creator", foreignKey: "creator_id" });
   users.hasMany(sports, { as: "sports", foreignKey: "creator_id" });
+    otps.belongsTo(users, { as: "user_otp", foreignKey: "user", });
+  users.hasOne(otps, { as: "otp", foreignKey: "id" });
 
   return {
     Texts,
@@ -119,6 +123,7 @@ function initModels(sequelize) {
     sports,
     units,
     users,
+    otps,
   };
 }
 const models = initModels(sequelize);
