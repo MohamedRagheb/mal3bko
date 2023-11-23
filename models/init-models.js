@@ -108,7 +108,7 @@ function initModels(sequelize) {
   users.hasMany(reviews, { as: "sender_reviews", foreignKey: "sender" });
   sports.belongsTo(users, { as: "creator", foreignKey: "creator_id" });
   users.hasMany(sports, { as: "sports", foreignKey: "creator_id" });
-  otps.belongsTo(users, { as: "for", foreignKey: "user" });
+    otps.belongsTo(users, { as: "user_otp", foreignKey: "user", });
   users.hasOne(otps, { as: "otp", foreignKey: "id" });
 
   return {

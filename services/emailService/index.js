@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const verfiyEmailTempelate = require("./emailTempelets/VerifyEmailTempelate")
 async function sendVerificationEmail(userEmail,code,userName){
+    
         const transporter = nodemailer.createTransport({
             service: 'Gmail', // Use the email service provider you want
             auth: {

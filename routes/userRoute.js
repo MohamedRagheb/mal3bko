@@ -42,6 +42,15 @@ router.post(
   multer.none(),
   UserController.EditUser
 );
+router.post("/verifyEmail",
+    [
+        checkIfTokenSentAndNotExpierd,
+        checkIfAllDataThere,
+        errorHandelarAsMidelleWare,
+    ],
+    multer.none(),
+    UserController.verifyEmail
+    )
 router.delete(
   "/DeleteMyAccount",
   checkIfTokenSentAndNotExpierd,
