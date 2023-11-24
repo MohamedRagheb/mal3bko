@@ -4,6 +4,10 @@ const UserController = require("../Controllers/usersControllers");
 const { checkIfTokenSentAndNotExpierd } = require("../helpers/token");
 const { checkIfAllDataThere } = require("../middelwares/inputsHandelar");
 const errorHandelarAsMidelleWare = require("../middelwares/errorhandelars");
+const validator = require("../middelwares/Validator")
+const {userSchema} = require("../validators")
+const {logger} = require("sequelize/lib/utils/logger");
+
 // opreate
 const router = express.Router();
 const multer = Upload({ storage: Upload.memoryStorage() });
@@ -11,8 +15,8 @@ const parseDataMiddleware = multer.none();
 
 router.post(
   "/login",
-  [parseDataMiddleware, checkIfAllDataThere, errorHandelarAsMidelleWare],
-  UserController.login
+  validator('userSchema','loginSchema'),parseDataMiddleware, checkIfAllDataThere, errorHandelarAsMidelleWare,
+    ()=>(console.log("login"))
 );
 router.post(
   "/signUp",

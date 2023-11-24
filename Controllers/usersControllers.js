@@ -4,7 +4,6 @@ const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
 const {createOtpCode} = require("../utils/otpUtils")
 const sendVerificationEmail = require("../services/emailService")
 const userModel = models.users;
-const rolesModel = models.roles;
 const otpsModel = models.otps;
 
 const UserController = {
@@ -13,7 +12,6 @@ const UserController = {
     const {username, password} = req.body;
     try {
       const fristVersionData = await userModel.findOne({
-        // res.status(400).json({message:"Email Not Verified"})
         attributes: ["id", "role","is_verified"],
         include: "roles",
 
