@@ -12,7 +12,7 @@ const UserController = {
     const {username, password} = req.body;
     try {
       const fristVersionData = await userModel.findOne({
-        attributes: ["id", "role","is_verified"],
+        attributes: ["id", "role"],
         include: "roles",
 
         where: {username, password,is_verified:1,deleted:0},
@@ -43,44 +43,8 @@ const UserController = {
   },
 
   signUp: async (req, res) => {
-    // declare data in db
-    const {
-      username,
-      password,
-      confirmed_password,
-      email,
-      phone,
-      sports_played,
-    } = req.body;
-    // validtion on data
-    const schema = joi.object({
-      username: joi.string().required().min(6).max(16),
-      password: joi.string().required().min(8),
-      confirmed_password: joi.any().valid(joi.ref("password")).required(),
-      email: joi.string().email(),
-      phone: joi.string().pattern(/^[0-9]+$/),
-    });
-    const err = schema.validate(
-        {
-          username: username,
-          password: password,
-          confirmed_password: confirmed_password,
-          email: email,
-          phone: phone,
-        },
-        {
-          abortEarly: false,
-        }
-    );
-    if (err.error?.details.length > 0) {
-      let errMessage = [];
-      for (let i = 0; i < err.error.details.length; i++) {
-        errMessage.push(err.error.details[i].message);
-      }
-      res.json({
-        Errors: errMessage,
-      });
-    } else {
+
+
       const keys = Object.keys(req.body);
       //appending all inputs to new object
       const newUser = {};
@@ -90,7 +54,6 @@ const UserController = {
           newUser[el] = req.body[el];
         }
       });
-      // genrate token and attach to user object
       try {
         const newUserToCreate = await userModel.create({...newUser});
         const token = genrateAcsessToken({
@@ -113,7 +76,6 @@ const UserController = {
           error: err["errors"],
         });
       }
-    }
   },
   userShow: async (req, res) => {
     const id = req.params.id;

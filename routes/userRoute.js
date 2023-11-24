@@ -5,8 +5,6 @@ const { checkIfTokenSentAndNotExpierd } = require("../helpers/token");
 const { checkIfAllDataThere } = require("../middelwares/inputsHandelar");
 const errorHandelarAsMidelleWare = require("../middelwares/errorhandelars");
 const validator = require("../middelwares/Validator")
-const {userSchema} = require("../validators")
-const {logger} = require("sequelize/lib/utils/logger");
 
 // opreate
 const router = express.Router();
@@ -15,13 +13,15 @@ const parseDataMiddleware = multer.none();
 
 router.post(
   "/login",
-  validator('userSchema','loginSchema'),parseDataMiddleware, checkIfAllDataThere, errorHandelarAsMidelleWare,
-    ()=>(console.log("login"))
+    parseDataMiddleware, checkIfAllDataThere, errorHandelarAsMidelleWare,validator("userSchema","loginSchema"),
+    UserController.login
 );
 router.post(
   "/signUp",
+
   multer.single("img"),
-  [errorHandelarAsMidelleWare],
+  errorHandelarAsMidelleWare,
+    validator("userSchema","signUpSchema"),
   UserController.signUp
 );
 router.get(
