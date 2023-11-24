@@ -20,8 +20,8 @@ router.post(
   "/signUp",
 
   multer.single("img"),
-  errorHandelarAsMidelleWare,
     validator("userSchema","signUpSchema"),
+  errorHandelarAsMidelleWare,
   UserController.signUp
 );
 router.get(
@@ -38,21 +38,23 @@ router.get(
 );
 router.post(
   "/EditUser/:id",
-  [
+
     checkIfTokenSentAndNotExpierd,
     checkIfAllDataThere,
     errorHandelarAsMidelleWare,
-  ],
+    validator("userSchema","editSchema")
+  ,
   multer.none(),
   UserController.EditUser
 );
 router.post("/verifyEmail",
-    [
+
         checkIfTokenSentAndNotExpierd,
         checkIfAllDataThere,
         errorHandelarAsMidelleWare,
-    ],
-    multer.none(),
+    validator("userSchema","verifyEmailSchema"),
+
+multer.none(),
     UserController.verifyEmail
     )
 router.delete(
