@@ -7,7 +7,6 @@
     <list default="true" id="c3ed9c8f-7510-4036-9093-e7c789931605" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/usersControllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/usersControllers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/otpUtils.js" beforeDir="false" afterPath="$PROJECT_DIR$/utils/otpUtils.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
