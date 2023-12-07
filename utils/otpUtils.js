@@ -8,4 +8,4 @@ return otpGenerator.generate(6,{
     specialChars: false,
 })
 }
-module.exports = {createOtpCode}
+module.exports = createOtpCode
