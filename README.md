@@ -6,8 +6,6 @@ mal3bko
 - [Installation](#installation)
 - [Usage](#usage)
 - [Features](#features)
-- [Contributing](#contributing)
-- [License](#license)
 
 
 # Run the application
