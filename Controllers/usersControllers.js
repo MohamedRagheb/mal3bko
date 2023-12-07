@@ -1,7 +1,7 @@
 const joi = require("joi");
 const models = require("../models/init-models");
 const { genrateAcsessToken, getpayloadInfo } = require("../helpers/token");
-const {createOtpCode} = require("../utils/otpUtils.js")
+const createOtpCode = require("../utils/otpUtils.js")
 const sendVerificationEmail = require("../services/emailService")
 const userModel = models.users;
 const rolesModel = models.roles;
