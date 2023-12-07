@@ -5,13 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c3ed9c8f-7510-4036-9093-e7c789931605" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Controllers/usersControllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/usersControllers.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/init-models.js" beforeDir="false" afterPath="$PROJECT_DIR$/models/init-models.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/otps.js" beforeDir="false" afterPath="$PROJECT_DIR$/models/otps.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models/users.js" beforeDir="false" afterPath="$PROJECT_DIR$/models/users.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/routes/userRoute.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/userRoute.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/emailService/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/emailService/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
