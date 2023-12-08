@@ -25,7 +25,7 @@ module.exports = function(sequelize, DataTypes) {
           allowNull:false,
             unique:true
         },
-            p: {
+        isExpierd: {
             allowNull: false,
             type: DataTypes.INTEGER,
             defaultValue:0
