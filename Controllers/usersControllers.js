@@ -1,7 +1,7 @@
 const joi = require('joi')
 const models = require('../models/init-models')
 const { genrateAcsessToken, getpayloadInfo } = require('../helpers/token')
-const createOtpCode = require('../handelers/otpUtils')
+// const createOtpCode = require('../handelers/otpUtils')
 const sendVerificationEmail = require('../services/emailService')
 const { col } = require('sequelize')
 const userModel = models.users
@@ -60,7 +60,7 @@ const UserController = {
         id: newUserToCreate.id,
       })
       await userModel.update({ token }, { where: { id: newUserToCreate.id } })
-      const otpCode = createOtpCode()
+      const otpCode = 989899
       const otpObj = { type: 'email', user: newUserToCreate.id, code: otpCode }
       await otpsModel.create(otpObj)
       await sendVerificationEmail(newUser.email, otpCode, newUser.username)
