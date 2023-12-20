@@ -6,7 +6,8 @@
       "use": "@now/node",
       "config": {
         "dependencies": {
-          "mysql2": "^3.6.2"
+          "mysql2": "^3.6.2",
+          "nodemailer": "^6.9.7"
         }
       }
     }
