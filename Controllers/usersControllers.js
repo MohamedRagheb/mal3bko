@@ -2,14 +2,13 @@ const joi = require('joi')
 const models = require('../models/init-models')
 const { genrateAcsessToken, getpayloadInfo } = require('../helpers/token')
 const { createOtpCode } = require('../handelers/otpUtils')
-const sendVerificationEmail = require('../services/emailService/index.js')
+const sendVerificationEmail = require('../services/emailService')
 const { col } = require('sequelize')
 const userModel = models.users
 const otpsModel = models.otps
 
 const UserController = {
   login: async (req, res) => {
-    // declare data
     const { username, password } = req.body
     try {
       const firstVersionData = await userModel.findOne({
