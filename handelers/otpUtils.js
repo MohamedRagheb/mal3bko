@@ -6,4 +6,4 @@ function createOtpCode() {
     specialChars: false,
   })
 }
-module.exports = createOtpCode
+module.exports = { createOtpCode }
