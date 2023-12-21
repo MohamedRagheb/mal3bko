@@ -1,7 +1,7 @@
 const joi = require('joi')
 const models = require('../models/init-models')
 const { genrateAcsessToken, getpayloadInfo } = require('../helpers/token')
-const { createOtpCode } = require('../handelers/otpUtils.js')
+const { createOtpCode } = require('../handelers/otpUtils')
 const sendVerificationEmail = require('../services/emailService/index.js')
 const { col } = require('sequelize')
 const userModel = models.users
