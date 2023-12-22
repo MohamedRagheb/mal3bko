@@ -5,8 +5,8 @@ const { genrateAcsessToken, getpayloadInfo } = require('../helpers/token')
 // const sendVerificationEmail = require('../services/emailService')
 const { col } = require('sequelize')
 const otpGenerator = require('otp-generator')
-const nodemailer = require("nodemailer");
-const verfiyEmailTempelate = require("../services/emailService/emailTempelets/VerifyEmailTempelate");
+const nodemailer = require('nodemailer')
+const verfiyEmailTempelate = require('../services/emailService/emailTempelets/VerifyEmailTempelate')
 const userModel = models.users
 const otpsModel = models.otps
 
@@ -39,7 +39,7 @@ const sendVerificationEmail = async (userEmail, code, userName) => {
       console.log('Email sent:', info.response)
     }
   })
-  
+}
 const UserController = {
   login: async (req, res) => {
     const { username, password } = req.body
