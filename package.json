@@ -26,6 +26,7 @@
     "mysql2": "^3.6.2",
     "nodemailer": "^6.9.7",
     "otp-generator": "^4.0.1",
+    "path": "^0.12.7",
     "sequelize": "^6.33.0",
     "vercel": "^32.4.1"
   },

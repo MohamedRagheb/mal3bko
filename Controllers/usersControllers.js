@@ -3,6 +3,7 @@ const models = require('../models/init-models')
 const { genrateAcsessToken, getpayloadInfo } = require('../helpers/token')
 const { createOtpCode } = require('../handelers/otp.js')
 const sendVerificationEmail = require('../services/emailService')
+const path = require('path')
 const userModel = models.users
 const otpsModel = models.otps
 
@@ -62,7 +63,9 @@ const UserController = {
       const otpObj = { type: 'email', user: newUserToCreate.id, code: otpCode }
       await otpsModel.create(otpObj)
       await sendVerificationEmail(newUser.email, otpCode, newUser.username)
-
+      const { filename } = req.file
+      const fullPath = path.join(__dirname, 'public/uploads', filename)
+      console.log(fullPath)
       res.status(200).json({ message: 'Verification E-mail Sent' })
     } catch (err) {
       console.log(err)
