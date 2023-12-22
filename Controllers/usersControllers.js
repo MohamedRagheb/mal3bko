@@ -1,3 +1,4 @@
+
 const joi = require('joi')
 const models = require('../models/init-models')
 const { genrateAcsessToken, getpayloadInfo } = require('../helpers/token')
@@ -10,10 +11,10 @@ const UserController = {
   login: async (req, res) => {
     const { username, password } = req.body
     try {
-      const firstVersionData = await userModel.findOne({
-        // res.status(400).json({message:"Email Not Verified"})
-        attributes: ['id', 'role', 'is_verified'],
-        include: 'roles',
+
+      const fristVersionData = await userModel.findOne({
+        attributes: ["id", "role"],
+        include: "roles",
 
         where: { username, password, is_verified: 1, deleted: 0 },
       })
@@ -41,36 +42,38 @@ const UserController = {
     }
   },
 
-  signUp: async (req, res) => {
-    // declare data in db
-    const { username, password, confirmed_password, email, phone, sports_played } = req.body
-    const newUser = {
-      username,
-      password,
-      confirmed_password,
-      email,
-      phone,
-      sports_played,
-    }
-    try {
-      const newUserToCreate = await userModel.create({ ...newUser })
-      const token = genrateAcsessToken({
-        id: newUserToCreate.id,
-      })
-      await userModel.update({ token }, { where: { id: newUserToCreate.id } })
-      const otpCode = createOtpCode()
-      const otpObj = { type: 'email', user: newUserToCreate.id, code: otpCode }
-      await otpsModel.create(otpObj)
-      await sendVerificationEmail(newUser.email, otpCode, newUser.username)
+  signUp: async (req, res) =>{
+      const keys = Object.keys(req.body);
+      //appending all inputs to new object
+      const newUser = {};
 
-      res.status(200).json({ message: 'Verification E-mail Sent' })
-    } catch (err) {
-      console.log(err)
-      res.status(500).json({
-        message: 'commonErrors.BadRequest.errorMessage',
-        error: err['errors'],
-      })
-    }
+      keys.forEach((el) => {
+        if (el != "confirmed_password") {
+          newUser[el] = req.body[el];
+        }
+      });
+      try {
+        const newUserToCreate = await userModel.create({...newUser});
+        const token = genrateAcsessToken({
+          id: newUserToCreate.id,
+        });
+        await userModel.update(
+            {token},
+            {where: {id: newUserToCreate.id}}
+        );
+        const otpCode = createOtpCode()
+
+        await otpsModel.create({type: "email", user: newUserToCreate.id, code: otpCode})
+        await sendVerificationEmail(newUser.email, otpCode, newUser.username)
+
+        res.status(200).json({message: "Verification E-mail Sent"});
+      } catch (err) {
+        console.log(err);
+        res.status(500).json({
+          message: "commonErrors.BadRequest.errorMessage",
+          error: err["errors"],
+        });
+      }
   },
   userShow: async (req, res) => {
     const id = req.params.id
