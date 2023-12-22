@@ -4,7 +4,33 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c3ed9c8f-7510-4036-9093-e7c789931605" name="Changes" comment="" />
+    <list default="true" id="c3ed9c8f-7510-4036-9093-e7c789931605" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.env.example" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/middelwares/imageMiddleware.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.env" beforeDir="false" afterPath="$PROJECT_DIR$/.env" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Controllers/usersControllers.js" beforeDir="false" afterPath="$PROJECT_DIR$/Controllers/usersControllers.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/1ab4845a3530ef400c4f55c444d6d06e" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/377d13bf93549e04777ab578f8091c9b" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/44c7aee3d464569541e29288ebcf7ca3" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/4fe40d64274573f29030ec12d22c36e7" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/825d2574b82d26ec7542d44473e83146" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/a36142d727ef96ea6c89ced2c72a5dae" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/b48c6e4e7edb8d68fb014978626e61ab" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Files/fbb00ec2012ccdd8a05b592fa980c82b" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/userRoute.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/userRoute.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users_imgs/014738f0211d21a6432382f11deb159f" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users_imgs/0c34727f8fe448050acbf4340109dbec" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users_imgs/400893fa1122e3bda794c98784169a2b" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users_imgs/749f205cdd26aa4c2fb249051483e1dc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users_imgs/acd5aaa3d892a40f72b085a442eb8df6" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users_imgs/bd4bc27652cf90a01d383a30d1565cfc" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users_imgs/c314a7c50d5be220823cf84362dcc295" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/users_imgs/e55fbfa7b9fd6951c82c4de08855d3a4" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -76,6 +102,7 @@
       <workItem from="1702492653491" duration="7000" />
       <workItem from="1703112270381" duration="3068000" />
       <workItem from="1703182676339" duration="3748000" />
+      <workItem from="1703253184146" duration="4193000" />
     </task>
     <servers />
   </component>
