@@ -1,45 +1,11 @@
 const joi = require('joi')
 const models = require('../models/init-models')
 const { genrateAcsessToken, getpayloadInfo } = require('../helpers/token')
-// const { createOtpCode } = require('../handelers/otp.js')
-// const sendVerificationEmail = require('../services/emailService')
-const { col } = require('sequelize')
-const otpGenerator = require('otp-generator')
-const nodemailer = require('nodemailer')
-const verfiyEmailTempelate = require('../services/emailService/emailTempelets/VerifyEmailTempelate')
+const { createOtpCode } = require('../handelers/otp.js')
+const sendVerificationEmail = require('../services/emailService')
 const userModel = models.users
 const otpsModel = models.otps
 
-function createOtpCode() {
-  return otpGenerator.generate(6, {
-    upperCaseAlphabets: false,
-    lowerCaseAlphabets: false,
-    specialChars: false,
-  })
-}
-
-const sendVerificationEmail = async (userEmail, code, userName) => {
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail', // Use the email service provider you want
-    auth: {
-      user: process.env.EMAIL_USERNAME,
-      pass: process.env.EMAIL_password,
-    },
-  })
-  const mailOptions = {
-    from: process.env.EMAIL_USERNAME,
-    to: userEmail,
-    subject: `mal3bko Email verification code`,
-    html: verfiyEmailTempelate(code, userName),
-  }
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error('Error sending email:', error)
-    } else {
-      console.log('Email sent:', info.response)
-    }
-  })
-}
 const UserController = {
   login: async (req, res) => {
     const { username, password } = req.body
